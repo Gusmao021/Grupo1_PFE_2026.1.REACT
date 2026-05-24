@@ -2,7 +2,10 @@
 |---------------|------------------------------- |
 |Footer         |Maria Eduarda                   |
 |Home           |Filipe                          |
-|Artigos        |Vitor                          |
+|Artigos        |Vitor                           |
 |Quem Somos     |Gabriel                         |
-|Contato        |Vitor Zanconato                |
+|Contato        |Vitor Zanconato                 |
 |Header         |Pedro                           |
+
+
+teste duda
