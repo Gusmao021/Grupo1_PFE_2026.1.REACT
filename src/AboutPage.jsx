@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import './QuemSomos.css';
+import './AboutPage.css';
 
-export default function QuemSomos() {
+export default function AboutPage() {
   const [fundadores, setFundadores] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
