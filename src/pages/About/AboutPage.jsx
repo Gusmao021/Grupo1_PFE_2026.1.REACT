@@ -15,7 +15,13 @@ export default function AboutPage() {
         const pages = await res.json();
 
         // Filtra apenas as páginas com foto destacada
-        const data = pages.filter(p => p._embedded?.['wp:featuredmedia']?.[0]?.source_url);
+        // CORRIGIDO — exclui a página "Quem Somos" pelo título
+const data = pages.filter(p => {
+  const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+  const titulo = p.title?.rendered?.toLowerCase() ?? '';
+  const isQuemSomos = titulo.includes('quem somos') || titulo.includes('quem-somos');
+  return hasFoto && !isQuemSomos;
+});
         setFundadores(data);
       } catch (err) {
         console.warn('Falha ao carregar fundadores:', err);
@@ -130,7 +136,7 @@ export default function AboutPage() {
                 </svg>
               </div>
               <h3>Missão</h3>
-              <p>Reunir, capacitar e representar os conselheiros do Brasil, promovendo boas práticas e fortalecendo a cultura de transparência.</p>
+              <p>Reunir, capacitar e representar os conselheiros de administração, fiscais e consultivos do Brasil, promovendo boas práticas de governança corporativa e fortalecendo a cultura de transparência, ética e responsabilidade nas organizações.</p>
             </article>
             <article className="qs-card reveal">
               <div className="qs-card-icon">
@@ -140,7 +146,7 @@ export default function AboutPage() {
                 </svg>
               </div>
               <h3>Visão</h3>
-              <p>Ser reconhecida como a principal referência em governança corporativa para conselheiros no Brasil.</p>
+              <p>Ser reconhecida como a principal referência em governança corporativa para conselheiros no Brasil, influenciando positivamente o ambiente de negócios e contribuindo para o desenvolvimento sustentável das organizações brasileiras.</p>
             </article>
             <article className="qs-card reveal">
               <div className="qs-card-icon">
@@ -153,6 +159,8 @@ export default function AboutPage() {
                 <li><strong>Ética</strong> nas relações e práticas</li>
                 <li><strong>Transparência</strong> em todas as ações</li>
                 <li><strong>Excelência</strong> técnica e profissional</li>
+                <li><strong>Colaboração</strong> entre os membros</li>
+                <li><strong>Independência</strong> e imparcialidade</li>
               </ul>
             </article>
           </div>
@@ -165,31 +173,33 @@ export default function AboutPage() {
           <div className="qs-section-header reveal">
             <span className="hero-eyebrow qs-eyebrow-dark">Atuação</span>
             <h2>O que fazemos</h2>
+            <p>Conheça as principais frentes de trabalho da ACBrasil em prol da governança corporativa no Brasil.</p>
           </div>
           <div className="qs-cards-grid qs-cards-grid--4">
             <article className="qs-card reveal">
               <div className="qs-card-icon"><i className="fa-solid fa-graduation-cap"></i></div>
-              <h3>Capacitação</h3>
-              <p>Cursos e eventos voltados ao desenvolvimento contínuo dos conselheiros.</p>
+              <h3>Capacitação e Educação</h3>
+              <p>Cursos, workshops, webinars e eventos presenciais voltados ao desenvolvimento contínuo dos conselheiros — finanças, ESG, compliance, estratégia e liderança.</p>
             </article>
             <article className="qs-card reveal">
-              <div className="qs-card-icon"><i className="fa-solid fa-users"></i></div>
-              <h3>Networking</h3>
-              <p>Encontros que aproximam profissionais criando conexões estratégicas.</p>
+              <div className="qs-card-icon"><i className="fa-solid fa-share-nodes"></i></div>
+              <h3>Networking Qualificado</h3>
+              <p>Encontros, jantares e fóruns que aproximam conselheiros de diferentes setores, criando oportunidades de troca e conexões estratégicas.</p>
             </article>
             <article className="qs-card reveal">
               <div className="qs-card-icon"><i className="fa-solid fa-book-open"></i></div>
-              <h3>Conteúdo</h3>
-              <p>Artigos e relatórios sobre temas relevantes para a prática de conselheiros.</p>
+              <h3>Produção de Conteúdo</h3>
+              <p>Artigos, pesquisas, guias e relatórios sobre temas relevantes para a prática de conselheiros, disponíveis a todos os membros.</p>
             </article>
             <article className="qs-card reveal">
               <div className="qs-card-icon"><i className="fa-solid fa-landmark"></i></div>
-              <h3>Representação</h3>
-              <p>Atuamos junto a órgãos reguladores representando os nossos interesses.</p>
+              <h3>Representação Institucional</h3>
+              <p>Atuamos junto a órgãos reguladores e fóruns nacionais e internacionais, representando os interesses dos conselheiros.</p>
             </article>
           </div>
         </div>
       </section>
+ 
 
       {/* ── FUNDADORES ── */}
       <section className="qs-founders" id="founders">
