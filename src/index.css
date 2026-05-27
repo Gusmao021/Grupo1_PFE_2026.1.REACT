@@ -1,0 +1,23 @@
+:root {
+    --navy-900: #0f0f3d;
+    --navy-800: #15154d;
+    --navy-700: #1e1e6b;
+    --navy-600: #2a2a85;
+    --navy-500: #3b3bb0;
+    --navy-50: #f0f0fa;
+    --gold-500: #f5b800;
+    --gold-600: #e0a500;
+    --ink-900: #0a0a1f;
+    --ink-700: #2a2a45;
+    --ink-500: #5a5a75;
+    --ink-300: #9a9ab0;
+    --ink-200: #c8c8d8;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
