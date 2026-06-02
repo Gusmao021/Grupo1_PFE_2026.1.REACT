@@ -5,7 +5,7 @@ const heroSlides = [
   {
     eyebrow: "Governança Corporativa",
     title: ["Influenciar e transformar as empresas brasileiras pela ", "governança", "."],
-    image: "/images/hero-1.jpg",
+    image: "../images/jornada.jpg",
     alt: "Governança corporativa",
     actions: [
       { label: "Associe-se", href: "/contato#associe-form", style: "primary" },
@@ -15,43 +15,43 @@ const heroSlides = [
   {
     eyebrow: "Liderança",
     title: ["Construindo líderes preparados para os ", "desafios", " do mercado atual."],
-    image: "/images/hero-2.jpg",
+    image: "../images/lider.png",
     alt: "Liderança",
     actions: [{ label: "Saiba mais", href: "/artigos", style: "primary" }],
   },
   {
     eyebrow: "Conexão",
     title: ["Conectando conselheiros e empresas para um ", "futuro sustentável", "."],
-    image: "/images/hero-3.jpg",
+    image: "../images/event.png",
     alt: "Conexão",
     actions: [{ label: "Saiba mais", href: "/artigos", style: "primary" }],
   },
   {
     eyebrow: "Excelência",
     title: ["Excelência em governança para empresas de ", "todos os segmentos", "."],
-    image: "/images/hero-4.jpg",
+    image: "../images/5stars.jpg",
     alt: "Excelência",
     actions: [{ label: "Saiba mais", href: "/artigos", style: "primary" }],
   },
   {
     eyebrow: "Cultura",
     title: ["Transformando a cultura organizacional brasileira ", "desde 2009", "."],
-    image: "/images/hero-5.jpg",
+    image: "../images/organização.jpg",
     alt: "Cultura organizacional",
     actions: [{ label: "Saiba mais", href: "/artigos", style: "primary" }],
   },
 ];
  
 const artigos = [
-  { img: "/images/artigo-1.jpg", tag: "Governança", title: "Artigo 1", text: "Lorem ipsum dolor sit amet, consectetur adipiscing." },
-  { img: "/images/artigo-2.jpg", tag: "Liderança", title: "Artigo 2", text: "Lorem ipsum dolor sit amet, consectetur adipiscing." },
-  { img: "/images/artigo-3.jpg", tag: "Mercado", title: "Artigo 3", text: "Lorem ipsum dolor sit amet, consectetur adipiscing." },
+  { img: "../images/O-Mito-da-Caverna.webp", tag: "Governança", title: "Governança Corporativa e a Caverna de Platão", text: "" },
+  { img: "../images/negocios.jpg", tag: "Liderança", title: "Aumenta preocupação de CEOs de todo o mundo com a continuidade dos negócios", text: "" },
+  { img: "../images/operacoes.jpg", tag: "M&A", title: "Cultura e sinergia em operações de M&A", text: "" },
 ];
  
 const associados = [
-  { img: "/images/associado-1.jpg", tag: "Conselheiro", title: "Associado 1", text: "Lorem ipsum dolor sit amet." },
-  { img: "/images/associado-2.jpg", tag: "Conselheira", title: "Associado 2", text: "Lorem ipsum dolor sit amet." },
-  { img: "/images/associado-3.jpg", tag: "Conselheiro", title: "Associado 3", text: "Lorem ipsum dolor sit amet." },
+  { img: "/images/members/alexandre-reis.jpg", tag: "Conselheiro", title: "Alexandre Reis", text: "Conselheiro Fundador ACBrasil" },
+  { img: "/images/members/americo-oliveira.jpg", tag: "Conselheira", title: "Americo Oliveira", text: "Conselheiro Fundador ACBrasil" },
+  { img: "/images/members/ricardo-gentil.jpg", tag: "Conselheiro", title: "Ricardo Gentil", text: "Conselheiro Fundador ACBrasil" },
 ];
  
 function HomePage() {
