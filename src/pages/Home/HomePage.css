@@ -779,8 +779,8 @@ img {
  
 .sparkline polyline {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    strokeLinecap: round;
+    strokeLinejoin: round;
     transition: stroke 0.5s var(--ease);
 }
  
