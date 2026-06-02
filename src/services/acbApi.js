@@ -52,8 +52,6 @@ export function pickCategoryName(post) {
     const terms = post._embedded?.['wp:term']?.[0] || []
     const sub = terms.find(t => t.slug !== 'artigos')
     return (sub || terms[0])?.name || 'Artigo'
-export async function getArtigos() {
-    return []
 }
  
 // ─── Páginas de listagem (usado em /artigos) ───
@@ -161,9 +159,4 @@ export async function fetchHomeAssociados(count = 3) {
         console.warn('fetchHomeAssociados falhou:', err)
         return []
     }
-}
- 
-
-export async function getMembers() {
-    return []
 }
