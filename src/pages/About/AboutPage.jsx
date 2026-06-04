@@ -35,8 +35,6 @@ export default function AboutPage() {
         try {
           pages = JSON.parse(text);
         } catch (e) {
-          // Resolvemos o erro "never used" usando o "e.message" no console
-          // e paramos de usar o "throw" para não explodir a tela do Vite.
           console.error('A API não retornou um JSON válido. Detalhes:', e.message);
         }
 
@@ -64,8 +62,7 @@ export default function AboutPage() {
     fetchFundadores(); 
   }, []); 
 
-  // Lógica do Scroll Reveal
-  // ... (o restante do seu código continua exatamente igual a partir daqui)
+  
   // Lógica do Scroll Reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
