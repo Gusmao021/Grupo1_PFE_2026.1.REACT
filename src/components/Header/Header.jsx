@@ -36,7 +36,7 @@ export default function Header() {
                     <li><Link to="/contato" class="nav-link">Contato</Link></li>
                 </ul>
 
-                <Link to="/contato" class="header-cta">Associe-se</Link>
+              <Link to="/contato#associe-form" className="header-cta">Associe-se</Link>
 
                 <button class="hamburger" aria-label="Abrir menu" aria-expanded="false">
                     <span></span><span></span><span></span>
