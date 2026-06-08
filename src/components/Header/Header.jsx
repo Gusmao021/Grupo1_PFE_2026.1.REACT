@@ -42,7 +42,7 @@ export default function Header() {
                     <li><Link to="/contato" className={isActive("/contato")}>Contato</Link></li>
                 </ul>
 
-                <Link to="/contato#associe-form" className="header-cta">Associe-se</Link>
+                <Link to="/contato" className="header-cta">Associe-se</Link>
 
                 <button
                     className="hamburger"

@@ -10,29 +10,59 @@ export default function AboutPage() {
     const fetchFundadores = async () => {
       const WP_API = 'https://acbrasil.org.br/cms/wp-json/wp/v2';
       try {
-        const res = await fetch(`${WP_API}/pages?search=quem+somos&per_page=20&_embed=1`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const pages = await res.json();
+        const params = new URLSearchParams({
+          search: 'quem somos',
+          per_page: '20',
+          _embed: '1',
+          t: Date.now() 
+        });
 
-        // Filtra apenas as páginas com foto destacada
-        // CORRIGIDO — exclui a página "Quem Somos" pelo título
-const data = pages.filter(p => {
-  const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-  const titulo = p.title?.rendered?.toLowerCase() ?? '';
-  const isQuemSomos = titulo.includes('quem somos') || titulo.includes('quem-somos');
-  return hasFoto && !isQuemSomos;
-});
-        setFundadores(data);
+        const res = await fetch(`${WP_API}/pages?${params.toString()}`, {
+          headers: {
+            'Accept': 'application/json' 
+          }
+        });
+
+        if (!res.ok) {
+          console.error(`Erro HTTP: ${res.status}`);
+          setFundadores([]);
+          return; // Sai da função sem quebrar o app
+        }
+
+        const text = await res.text();
+        let pages = [];
+        
+        try {
+          pages = JSON.parse(text);
+        } catch (e) {
+          console.error('A API não retornou um JSON válido. Detalhes:', e.message);
+        }
+
+        // Previne erros caso "pages" não seja um array válido
+        if (Array.isArray(pages)) {
+          const data = pages.filter(p => {
+            const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            const titulo = p.title?.rendered?.toLowerCase() ?? '';
+            const isQuemSomos = titulo.includes('quem somos') || titulo.includes('quem-somos');
+            return hasFoto && !isQuemSomos;
+          });
+          setFundadores(data);
+        } else {
+          setFundadores([]);
+        }
+
       } catch (err) {
-        console.warn('Falha ao carregar fundadores:', err);
+        console.error('Falha de conexão:', err.message);
+        setFundadores([]);
       } finally {
         setCarregando(false);
       }
-    };
+    }; 
 
-    fetchFundadores();
-  }, []);
+    fetchFundadores(); 
+  }, []); 
 
+  
   // Lógica do Scroll Reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -200,7 +230,6 @@ const data = pages.filter(p => {
         </div>
       </section>
  
-
       {/* ── FUNDADORES ── */}
       <section className="qs-founders" id="founders">
         <div className="qs-section-content">
