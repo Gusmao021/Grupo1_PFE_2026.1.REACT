@@ -4,7 +4,9 @@
 // Centraliza todo o acesso a https://acbrasil.org.br/cms/wp-json
 // ============================================================
  
-const API_ORIGIN = 'https://acbrasil.org.br/cms/wp-json/wp/v2'
+const API_ORIGIN = import.meta.env.DEV
+  ? '/acb-api/cms/wp-json/wp/v2'
+  : 'https://acbrasil.org.br/cms/wp-json/wp/v2'
 export const PER_PAGE = 6
  
 // ID da categoria "Artigos" no WP da ACBrasil — exclui newsletters/noticias
@@ -135,14 +137,19 @@ export async function fetchHomeArticles(count = 3) {
  
 // ─── Home: cards de associados (conselheiros com foto destacada) ───
  
+// ID da página "Quem somos" — os conselheiros são páginas filhas dela.
+// Buscar por parent evita o bug do plugin tagDiv que estoura no search.
+const QUEM_SOMOS_ID = 559
+
 export async function fetchHomeAssociados(count = 3) {
     try {
-        const res = await wpFetch('/pages?search=quem+somos&per_page=15&_embed=1')
+        const res = await wpFetch(
+            `/pages?parent=${QUEM_SOMOS_ID}&per_page=${count}&_embed=1`
+        )
         if (!res.ok) return []
         const pages = await res.json()
         return pages
             .filter(p => p._embedded?.['wp:featuredmedia']?.[0]?.source_url)
-            .slice(0, count)
             .map(p => {
                 const excerpt = stripHtml(p.excerpt?.rendered || '')
                 return {
