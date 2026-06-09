@@ -6,6 +6,3 @@
 |Quem Somos     |Gabriel                         |
 |Contato        |Vitor Zanconato                 |
 |Header         |Pedro                           |
-
-
-teste duda
