@@ -88,6 +88,7 @@ export default function ArticlesPage() {
                             placeholder="Buscar artigos..."
                             value={searchInput}
                             onChange={e => setSearchInput(e.target.value)}
+                            aria-label="Campo de busca para artigos"
                         />
                     </div>
                     <div className="filter-pills">
