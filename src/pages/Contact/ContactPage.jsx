@@ -111,18 +111,35 @@ export default function Contato() {
     }
   };
 
-  // 3. Submissões controladas prontas para consumo de APIs
-  const handleContactSubmit = (e) => {
+  //Submissões controladas prontas para consumo de APIs
+const handleContactSubmit = async (e) => {
     e.preventDefault();
-    // Pronto para enviar via Axios / Fetch
-    console.log("Submit Contato:", contactForm);
-    alert("Mensagem enviada com sucesso!");
-    
-    // Opcional: Limpar formulário após envio com sucesso
-    setContactForm({ nome: "", email: "", assunto: "", mensagem: "" });
-  };
 
-  const handleAssocSubmit = (e) => {
+    try {
+      // Usamos o endpoint /ajax/ do FormSubmit para evitar o redirecionamento de página
+      const response = await fetch("https://formsubmit.co/ajax/devwebtms@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(contactForm)
+      });
+
+      if (response.ok) {
+        console.log("Submit Contato:", contactForm);
+        alert("Mensagem enviada com sucesso!");
+        // Limpa o formulário após envio com sucesso
+        setContactForm({ nome: "", email: "", assunto: "", mensagem: "" });
+      } else {
+        alert("Ocorreu um erro ao enviar a mensagem. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro no envio:", error);
+      alert("Ocorreu um erro de conexão.");
+    }
+  };
+  const handleAssocSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
 
@@ -139,16 +156,33 @@ export default function Contato() {
       return; // Interrompe o envio se houver inconsistências
     }
 
-    console.log("Submit Associação:", assocForm);
-    alert("Solicitação de associação enviada com sucesso!");
-    
-    setAssocForm({
-      nome: "", email: "", telefone: "", empresa: "",
-      cpf: "", cep: "", cargo: "", linkedin: "", motivo: ""
-    });
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/devwebtms@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(assocForm)
+      });
+
+      if (response.ok) {
+        console.log("Submit Associação:", assocForm);
+        alert("Solicitação de associação enviada com sucesso!");
+        
+        setAssocForm({
+          nome: "", email: "", telefone: "", empresa: "",
+          cpf: "", cep: "", cargo: "", linkedin: "", motivo: ""
+        });
+      } else {
+        alert("Ocorreu um erro ao enviar a solicitação. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro no envio:", error);
+      alert("Ocorreu um erro de conexão.");
+    }
   };
 
-  // Estilo em linha simples para mensagens de erro sem mexer no CSS global
   const errorStyle = {
     color: "var(--red-500)",
     fontSize: "12px",
@@ -483,7 +517,6 @@ export default function Contato() {
                 </div>
               </div>
 
-              {/* LINHA: CPF E CEP CONTROLADOS */}
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="assoc-cpf">
