@@ -11,7 +11,7 @@ export default function Header() {
     return (
         <header className={`header ${menuOpen ? "menu-open" : ""}`}>
             <div className="header-content">
-                <Link to="/" className="header-logo">
+                <Link to="/" className="header-logo" aria-label="Página inicial da ACBrasil">
                    
                    
                             {/*Logo em SVG*/}
