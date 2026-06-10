@@ -1,4 +1,3 @@
-import React from 'react'
 import { pickImage, pickCategoryName, stripHtml, formatDate, readingTime } from '../../services/acbApi'
 
 export default function FeaturedCard({ post }) {
