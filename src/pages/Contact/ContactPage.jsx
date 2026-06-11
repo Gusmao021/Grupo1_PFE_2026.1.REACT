@@ -93,7 +93,8 @@ export default function Contato() {
 
     if (name === "nome") {
       processedValue = removeEmojis(value).replace(/[0-9]/g, "");
-    } else if (name === "email" || name === "empresa" || name === "motivo") {
+    } else if (name === "email" || name === "empresa" || name === "motivo" || name === "linkedin") {
+      // ✅ Modificação feita aqui: "linkedin" foi adicionado para remover emojis
       processedValue = removeEmojis(value);
     } else if (name === "cpf") {
       processedValue = maskCpf(value);
@@ -112,7 +113,7 @@ export default function Contato() {
   };
 
   //Submissões controladas prontas para consumo de APIs
-const handleContactSubmit = async (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -139,6 +140,7 @@ const handleContactSubmit = async (e) => {
       alert("Ocorreu um erro de conexão.");
     }
   };
+  
   const handleAssocSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
