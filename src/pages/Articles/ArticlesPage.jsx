@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import './ArticlesPage.css'
 import { usePosts } from './usePosts'
 import FeaturedCard from './FeaturedCard'
