@@ -40,7 +40,7 @@ const maskPhone = (value) => {
 export default function Contato() {
   const location = useLocation();
 
-  // 1. Estados centralizados para cada formulário
+  // Estados centralizados para cada formulário
   const [contactForm, setContactForm] = useState({
     nome: "",
     email: "",
@@ -73,7 +73,7 @@ export default function Contato() {
     }
   }, [location]);
 
-  // 2. Manipuladores de mudança (onChange) otimizados
+  // Manipuladores de mudança (onChange) otimizados
   const handleContactChange = (e) => {
     const { name, value } = e.target;
     let processedValue = value;
@@ -94,7 +94,6 @@ export default function Contato() {
     if (name === "nome") {
       processedValue = removeEmojis(value).replace(/[0-9]/g, "");
     } else if (name === "email" || name === "empresa" || name === "motivo" || name === "linkedin") {
-      // ✅ Modificação feita aqui: "linkedin" foi adicionado para remover emojis
       processedValue = removeEmojis(value);
     } else if (name === "cpf") {
       processedValue = maskCpf(value);
