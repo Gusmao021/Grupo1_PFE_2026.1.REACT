@@ -311,7 +311,7 @@ function HomePage() {
               despertar a consciência sobre a importância da governança, transformando positivamente
               a realidade das empresas brasileiras, em especial as PMEs.
             </p>
-            <a href="/contato#associe-form" className="btn-outline">
+            <a href="/contato#associe-form" className="btn-primary">
               Associe-se agora
             </a>
           </div>
