@@ -11,11 +11,16 @@ import {
   getUsdBrl,
   getSelic,
 } from "../../services/stockMarketApi";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  YAxis,
+  Tooltip,
+} from "recharts";
  
-// ──────────────────────────────────────────────────────────────
-// Fallbacks: dados estaticos que aparecem antes da API responder
-// (ou caso ela falhe). Garantem que a Home nunca quebra.
-// ──────────────────────────────────────────────────────────────
+
+
  
 const heroSlidesDefault = [
   {
@@ -71,15 +76,90 @@ const associadosDefault = [
 ];
  
 const mercadoDefault = {
-  ibov: { label: "IBOVESPA", value: "128.450", change: "▲ 0,84%", isPositive: true, sparkline: null },
-  usd: { label: "USD/BRL", value: "R$ 5,72", change: "▼ 0,31%", isPositive: false, sparkline: null },
-  selic: { label: "SELIC", value: "10,50%", change: "Meta anual", isNeutral: true },
+  ibov: { label: "IBOVESPA", value: "128.450", change: "▲ 0,84%", isPositive: true, series: null },
+  usd: { label: "USD/BRL", value: "R$ 5,72", change: "▼ 0,31%", isPositive: false, series: null },
+  selic: { label: "SELIC", value: "10,50%", change: "Meta anual", isNeutral: true, series: null },
   updatedAt: null,
 };
- 
-// Sparklines de fallback (caso a API nao traga dados historicos)
-const SPARKLINE_FALLBACK_GREEN = "0,50 30,42 60,38 90,30 120,35 160,20 200,15";
-const SPARKLINE_FALLBACK_RED = "0,10 30,18 60,22 90,28 120,35 160,42 200,50";
+
+// Series de fallback (caso a API nao traga dados historicos)
+const SERIES_FALLBACK = {
+  ibov: [126100, 126800, 127200, 126900, 127600, 128100, 128450],
+  usd: [5.6, 5.63, 5.61, 5.66, 5.68, 5.7, 5.72],
+  // SELIC em "degraus" (cortes graduais do Copom)
+  selic: [11.25, 11.25, 10.75, 10.75, 10.5, 10.5],
+};
+
+// Formatadores de valor pro tooltip de cada indicador
+const fmt = {
+  ibov: (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 0 }),
+  usd: (v) =>
+    `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+  selic: (v) =>
+    `${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`,
+};
+
+
+
+function SparkTooltip({ active, payload, color, formatValue }) {
+  if (!active || !payload || !payload.length) return null;
+  const v = payload[0].value;
+  return (
+    <div className="spark-tip" style={{ borderColor: color }}>
+      <span className="spark-tip-dot" style={{ background: color }} />
+      {formatValue ? formatValue(v) : v}
+    </div>
+  );
+}
+
+function Sparkline({ data, color, gradId, formatValue }) {
+  const chartData = (data && data.length ? data : [0, 0]).map((v, i) => ({ i, v }));
+  const lastIdx = chartData.length - 1;
+
+  // Ponto pulsante apenas no ultimo valor (pulso via SMIL, sem distorcao)
+  const renderDot = (props) => {
+    const { cx, cy, index } = props;
+    if (index !== lastIdx || cx == null || cy == null) return <g key={`d-${index}`} />;
+    return (
+      <g key={`d-${index}`}>
+        <circle cx={cx} cy={cy} r={3.5} fill={color} opacity={0.3}>
+          <animate attributeName="r" values="3.5;9;3.5" dur="2.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0;0.35" dur="2.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx={cx} cy={cy} r={3.2} fill={color} stroke="#fff" strokeWidth={1.6} />
+      </g>
+    );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={80}>
+      <AreaChart data={chartData} margin={{ top: 8, right: 10, bottom: 4, left: 10 }}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.32} />
+            <stop offset="95%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <YAxis hide domain={["dataMin", "dataMax"]} />
+        <Tooltip
+          cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "3 3" }}
+          content={<SparkTooltip color={color} formatValue={formatValue} />}
+        />
+        <Area
+          type="monotone"
+          dataKey="v"
+          stroke={color}
+          strokeWidth={2.5}
+          fill={`url(#${gradId})`}
+          dot={renderDot}
+          activeDot={{ r: 4, strokeWidth: 0, fill: color }}
+          isAnimationActive
+          animationDuration={1100}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
  
 function formatUpdate(date) {
   if (!date) return "Atualizado: --";
@@ -361,46 +441,32 @@ function HomePage() {
             <div className="charts reveal" ref={addReveal}>
               <div className="chart-box">
                 <span className="chart-title">Ibovespa — últimos pregões</span>
-                <svg viewBox="0 0 200 60" className="sparkline sparkline--green" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#16a34a" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#16a34a" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <polygon
-                    points={`${mercado.ibov.sparkline || SPARKLINE_FALLBACK_GREEN} 200,60 0,60`}
-                    fill="url(#gradGreen)"
-                  />
-                  <polyline
-                    points={mercado.ibov.sparkline || SPARKLINE_FALLBACK_GREEN}
-                    fill="none"
-                    stroke="#16a34a"
-                    strokeWidth="2.5"
-                  />
-                </svg>
+                <Sparkline
+                  data={mercado.ibov.series || SERIES_FALLBACK.ibov}
+                  color="#16a34a"
+                  gradId="gradGreen"
+                  formatValue={fmt.ibov}
+                />
               </div>
- 
+
               <div className="chart-box">
                 <span className="chart-title">Câmbio USD/BRL — 7 dias</span>
-                <svg viewBox="0 0 200 60" className="sparkline sparkline--red" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#dc2626" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#dc2626" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <polygon
-                    points={`${mercado.usd.sparkline || SPARKLINE_FALLBACK_RED} 200,60 0,60`}
-                    fill="url(#gradRed)"
-                  />
-                  <polyline
-                    points={mercado.usd.sparkline || SPARKLINE_FALLBACK_RED}
-                    fill="none"
-                    stroke="#dc2626"
-                    strokeWidth="2.5"
-                  />
-                </svg>
+                <Sparkline
+                  data={mercado.usd.series || SERIES_FALLBACK.usd}
+                  color="#dc2626"
+                  gradId="gradRed"
+                  formatValue={fmt.usd}
+                />
+              </div>
+
+              <div className="chart-box">
+                <span className="chart-title">SELIC — meta (Copom)</span>
+                <Sparkline
+                  data={mercado.selic.series || SERIES_FALLBACK.selic}
+                  color="#f5b800"
+                  gradId="gradGold"
+                  formatValue={fmt.selic}
+                />
               </div>
             </div>
           </div>
