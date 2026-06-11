@@ -127,7 +127,7 @@
 /* ─── ABOUT (split card) ─── */
 .qs-about {
   background: var(--surface-soft);
-  padding: 56px 80px 24px;
+  padding: 40px 80px 40px;
 }
 
 .qs-about-card {
