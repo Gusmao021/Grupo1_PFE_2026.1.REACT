@@ -40,7 +40,7 @@ const maskPhone = (value) => {
 export default function Contato() {
   const location = useLocation();
 
-  // 1. Estados centralizados para cada formulário
+  // Estados centralizados para cada formulário
   const [contactForm, setContactForm] = useState({
     nome: "",
     email: "",
@@ -73,7 +73,7 @@ export default function Contato() {
     }
   }, [location]);
 
-  // 2. Manipuladores de mudança (onChange) otimizados
+  // Manipuladores de mudança (onChange) otimizados
   const handleContactChange = (e) => {
     const { name, value } = e.target;
     let processedValue = value;
@@ -93,7 +93,7 @@ export default function Contato() {
 
     if (name === "nome") {
       processedValue = removeEmojis(value).replace(/[0-9]/g, "");
-    } else if (name === "email" || name === "empresa" || name === "motivo") {
+    } else if (name === "email" || name === "empresa" || name === "motivo" || name === "linkedin") {
       processedValue = removeEmojis(value);
     } else if (name === "cpf") {
       processedValue = maskCpf(value);
@@ -112,7 +112,7 @@ export default function Contato() {
   };
 
   //Submissões controladas prontas para consumo de APIs
-const handleContactSubmit = async (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -139,6 +139,7 @@ const handleContactSubmit = async (e) => {
       alert("Ocorreu um erro de conexão.");
     }
   };
+  
   const handleAssocSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
