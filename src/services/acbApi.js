@@ -71,6 +71,15 @@ export async function fetchFeaturedPost() {
     const data = await res.json()
     return data[0] ?? null
 }
+
+// ─── Artigo individual (usado em /artigos/:slug) ───
+
+export async function fetchPostBySlug(slug) {
+    const res = await wpFetch(`/posts?slug=${encodeURIComponent(slug)}&_embed=1`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const posts = await res.json()
+    return posts[0] ?? null
+}
  
 export async function fetchPosts({ page, categoryId, search, excludeId }) {
     const params = new URLSearchParams({ per_page: PER_PAGE, page, _embed: '1' })
@@ -128,6 +137,7 @@ export async function fetchHomeArticles(count = 3) {
             title: stripHtml(p.title.rendered),
             text: stripHtml(p.excerpt.rendered).slice(0, 80) + '…',
             link: p.link,
+            slug: p.slug,
         }))
     } catch (err) {
         console.warn('fetchHomeArticles falhou:', err)

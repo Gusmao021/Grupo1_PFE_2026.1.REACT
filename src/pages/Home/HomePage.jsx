@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import {
   fetchHeroImages,
@@ -172,6 +173,7 @@ function formatUpdate(date) {
 // ──────────────────────────────────────────────────────────────
  
 function HomePage() {
+  const navigate = useNavigate();
   const [heroSlides, setHeroSlides] = useState(heroSlidesDefault);
   const [artigos, setArtigos] = useState(artigosDefault);
   const [associados, setAssociados] = useState(associadosDefault);
@@ -257,9 +259,14 @@ function HomePage() {
  
   const cards = tab === "artigos" ? artigos : associados;
  
-  // Helper: abre o link do card em nova aba (se houver)
-  const openCard = (link) => {
-    if (link) window.open(link, "_blank", "noopener,noreferrer");
+  // Clique no card: artigos com slug abrem a página interna;
+  // demais (associados) seguem abrindo o link externo em nova aba.
+  const openCard = (card) => {
+    if (card.slug) {
+      navigate(`/artigos/${card.slug}`);
+    } else if (card.link) {
+      window.open(card.link, "_blank", "noopener,noreferrer");
+    }
   };
  
   // Helper: classe de mudanca (positive / negative / neutral)
@@ -366,9 +373,9 @@ function HomePage() {
             <div
               className={`card card--photo ${tab === "associados" ? "card--retrato" : "card--banner"}`}
               key={i}
-              onClick={() => openCard(c.link)}
+              onClick={() => openCard(c)}
               style={{
-                ...(c.link ? { cursor: "pointer" } : {}),
+                ...(c.slug || c.link ? { cursor: "pointer" } : {}),
                 // o mesmo banner vira fundo desfocado atrás da imagem inteira
                 ...(tab === "artigos" && c.img ? { backgroundImage: `url(${c.img})` } : {}),
               }}
