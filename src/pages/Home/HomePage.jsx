@@ -364,10 +364,14 @@ function HomePage() {
  
           {cards.map((c, i) => (
             <div
-              className="card card--photo"
+              className={`card card--photo ${tab === "associados" ? "card--retrato" : "card--banner"}`}
               key={i}
               onClick={() => openCard(c.link)}
-              style={c.link ? { cursor: "pointer" } : undefined}
+              style={{
+                ...(c.link ? { cursor: "pointer" } : {}),
+                // o mesmo banner vira fundo desfocado atrás da imagem inteira
+                ...(tab === "artigos" && c.img ? { backgroundImage: `url(${c.img})` } : {}),
+              }}
             >
               {c.img && <img src={c.img} alt={c.title} loading="lazy" />}
               <div className="card-overlay">

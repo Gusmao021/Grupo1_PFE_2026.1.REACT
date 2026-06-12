@@ -352,16 +352,48 @@
 .card--photo:hover img {
     transform: scale(1.08);
 }
- 
+
+/* Fotos de pessoas: ancora no topo pra não cortar a cabeça */
+.card--retrato img {
+    object-position: center top;
+}
+
+/* Banners de artigo: mostra a imagem inteira, sem cortar o conteúdo.
+   O fundo é o próprio banner desfocado, preenchendo as faixas vazias. */
+.card--banner {
+    background-size: cover;
+    background-position: center;
+}
+
+.card--banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(15, 15, 61, 0.35);
+}
+
+.card--banner img {
+    position: relative;
+    object-fit: contain;
+}
+
 .card-overlay {
     position: absolute;
     inset: 0;
     padding: 24px;
-    background: linear-gradient(to top, rgba(15, 15, 61, 0.92) 0%, rgba(15, 15, 61, 0.4) 45%, transparent 75%);
+    background: linear-gradient(to top, rgba(15, 15, 61, 0.92) 0%, rgba(15, 15, 61, 0.35) 35%, transparent 60%);
     color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    transition: opacity 0.4s var(--ease);
+}
+
+/* No hover o sombreado some, revelando o conteúdo da imagem */
+.card--photo:hover .card-overlay {
+    opacity: 0;
 }
  
 .card-tag {
