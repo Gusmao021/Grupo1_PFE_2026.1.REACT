@@ -1,8 +1,4 @@
-// ============================================================
-// stockMarketApi.js — Indicadores de mercado pra Home
-// Ibovespa: brapi.dev (precisa de token — gratuito em brapi.dev)
-// USD-BRL: AwesomeAPI (gratuito, sem token)
-// SELIC: API do Banco Central (gratuita, sem token)
+
 
 const BRAPI_TOKEN = import.meta.env.VITE_BRAPI_TOKEN || ''
  
@@ -16,22 +12,6 @@ function formatBR(n, decimals = 2) {
 }
  
 
-export function buildSparkline(values, width = 200, height = 60, pad = 5) {
-    if (!values || values.length < 2) return null
-    const min = Math.min(...values)
-    const max = Math.max(...values)
-    const range = max - min || 1
-    const stepX = width / (values.length - 1)
-    return values
-        .map((v, i) => {
-            const x = i * stepX
-            // SVG tem Y invertido: valor alto → Y baixo (perto de 0)
-            const y = pad + ((max - v) / range) * (height - pad * 2)
-            return `${x.toFixed(1)},${y.toFixed(1)}`
-        })
-        .join(' ')
-}
- 
 // ─── Ibovespa (brapi.dev) ───
  
 export async function getMarketIndex() {
@@ -55,7 +35,7 @@ export async function getMarketIndex() {
             value: formatBR(q.regularMarketPrice, 0),
             change: `${pct >= 0 ? '▲' : '▼'} ${formatBR(Math.abs(pct), 2)}%`,
             isPositive: pct >= 0,
-            sparkline: buildSparkline(series),
+            series,
         }
     } catch (err) {
         console.warn('getMarketIndex falhou:', err)
@@ -88,7 +68,7 @@ export async function getUsdBrl() {
             value: `R$ ${formatBR(parseFloat(u.bid), 2)}`,
             change: `${pct >= 0 ? '▲' : '▼'} ${formatBR(Math.abs(pct), 2)}%`,
             isPositive: pct >= 0,
-            sparkline: buildSparkline(series),
+            series,
         }
     } catch (err) {
         console.warn('getUsdBrl falhou:', err)
@@ -100,20 +80,25 @@ export async function getUsdBrl() {
  
 export async function getSelic() {
     try {
-        // Serie 432 = Meta da taxa Selic definida pelo Copom
+        // Serie 432 = Meta da taxa Selic definida pelo Copom (diaria).
+        // Buscamos ~180 dias pra montar um sparkline em "degraus" que
+        // mostra as decisoes recentes do Copom.
         const res = await fetch(
-            'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json'
+            'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/180?formato=json'
         )
         if (!res.ok) return null
         const data = await res.json()
-        const last = data[0]
-        if (!last) return null
- 
+        if (!data.length) return null
+
+        const series = data.map((d) => parseFloat(d.valor))
+        const last = series[series.length - 1]
+
         return {
             label: 'SELIC',
-            value: `${formatBR(parseFloat(last.valor), 2)}%`,
+            value: `${formatBR(last, 2)}%`,
             change: 'Meta anual',
             isNeutral: true,
+            series,
         }
     } catch (err) {
         console.warn('getSelic falhou:', err)
@@ -121,7 +106,7 @@ export async function getSelic() {
     }
 }
  
-// ─── Stubs antigos (mantidos pra compatibilidade caso alguem use) ───
+// 
  
 export async function getStockQuote(_ticker) { return null }
 export async function getStocks() { return [] }
