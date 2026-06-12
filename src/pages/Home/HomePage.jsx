@@ -364,7 +364,7 @@ function HomePage() {
  
           {cards.map((c, i) => (
             <div
-              className="card card--photo"
+              className={`card card--photo ${tab === "associados" ? "card--retrato" : ""}`}
               key={i}
               onClick={() => openCard(c.link)}
               style={c.link ? { cursor: "pointer" } : undefined}

@@ -352,16 +352,27 @@
 .card--photo:hover img {
     transform: scale(1.08);
 }
- 
+
+/* Fotos de pessoas: ancora no topo pra não cortar a cabeça */
+.card--retrato img {
+    object-position: center top;
+}
+
 .card-overlay {
     position: absolute;
     inset: 0;
     padding: 24px;
-    background: linear-gradient(to top, rgba(15, 15, 61, 0.92) 0%, rgba(15, 15, 61, 0.4) 45%, transparent 75%);
+    background: linear-gradient(to top, rgba(15, 15, 61, 0.92) 0%, rgba(15, 15, 61, 0.35) 35%, transparent 60%);
     color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    transition: opacity 0.4s var(--ease);
+}
+
+/* No hover o sombreado some, revelando o conteúdo da imagem */
+.card--photo:hover .card-overlay {
+    opacity: 0;
 }
  
 .card-tag {
