@@ -358,6 +358,27 @@
     object-position: center top;
 }
 
+/* Banners de artigo: mostra a imagem inteira, sem cortar o conteúdo.
+   O fundo é o próprio banner desfocado, preenchendo as faixas vazias. */
+.card--banner {
+    background-size: cover;
+    background-position: center;
+}
+
+.card--banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(15, 15, 61, 0.35);
+}
+
+.card--banner img {
+    position: relative;
+    object-fit: contain;
+}
+
 .card-overlay {
     position: absolute;
     inset: 0;
