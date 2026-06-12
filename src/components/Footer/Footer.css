@@ -135,7 +135,7 @@
     color: var(--ink-300, #a0a0a0);
     font-size: 14px;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s var(--ease);
 }
 
 .legal-links a:hover {
