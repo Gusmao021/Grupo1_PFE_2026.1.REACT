@@ -87,7 +87,7 @@
 
 .footer-column ul li a,
 .contact-link,
-.location-link {
+.location {
     color: var(--ink-200);
     text-decoration: none;
     font-size: 14px;
