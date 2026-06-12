@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { pickImage, pickCategoryName, stripHtml, formatDate, readingTime } from '../../services/acbApi'
 
 export default function FeaturedCard({ post }) {
@@ -26,9 +27,9 @@ export default function FeaturedCard({ post }) {
                             {formatDate(post.date)} ·{' '}
                             {readingTime(post.content?.rendered || post.excerpt?.rendered)} min de leitura
                         </span>
-                        <a href={post.link} className="read-link" target="_blank" rel="noopener">
+                        <Link to={`/artigos/${post.slug}`} className="read-link">
                             Ler Artigo →
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

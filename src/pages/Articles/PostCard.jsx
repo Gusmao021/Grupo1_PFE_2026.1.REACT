@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { pickImage, pickCategoryName, stripHtml, formatDate, readingTime } from '../../services/acbApi'
 
 export default function PostCard({ post }) {
@@ -17,9 +18,9 @@ export default function PostCard({ post }) {
                 </span>
                 <h3 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                 <p>{stripHtml(post.excerpt.rendered).slice(0, 140) + '…'}</p>
-                <a href={post.link} target="_blank" rel="noopener" className="read-link">
+                <Link to={`/artigos/${post.slug}`} className="read-link">
                     Ler Artigo →
-                </a>
+                </Link>
             </div>
         </article>
     )
