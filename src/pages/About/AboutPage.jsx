@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './AboutPage.css';
 
 export default function AboutPage() {
@@ -14,31 +15,30 @@ export default function AboutPage() {
           search: 'quem somos',
           per_page: '20',
           _embed: '1',
-          t: Date.now() 
+          t: Date.now()
         });
 
         const res = await fetch(`${WP_API}/pages?${params.toString()}`, {
           headers: {
-            'Accept': 'application/json' 
+            'Accept': 'application/json'
           }
         });
 
         if (!res.ok) {
           console.error(`Erro HTTP: ${res.status}`);
           setFundadores([]);
-          return; // Sai da função sem quebrar o app
+          return;
         }
 
         const text = await res.text();
         let pages = [];
-        
+
         try {
           pages = JSON.parse(text);
         } catch (e) {
           console.error('A API não retornou um JSON válido. Detalhes:', e.message);
         }
 
-        // Previne erros caso "pages" não seja um array válido
         if (Array.isArray(pages)) {
           const data = pages.filter(p => {
             const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
@@ -57,12 +57,11 @@ export default function AboutPage() {
       } finally {
         setCarregando(false);
       }
-    }; 
+    };
 
-    fetchFundadores(); 
-  }, []); 
+    fetchFundadores();
+  }, []);
 
-  
   // Lógica do Scroll Reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -91,14 +90,13 @@ export default function AboutPage() {
     const media = page._embedded?.['wp:featuredmedia']?.[0];
     if (!media) return null;
     const sizes = media.media_details?.sizes || {};
-    
+
     let url = sizes.medium_large?.source_url ||
               sizes.large?.source_url ||
               sizes.medium?.source_url ||
               media.source_url ||
               null;
 
-    // Força HTTPS para evitar bloqueio do navegador
     if (url && url.startsWith('http://')) {
       url = url.replace('http://', 'https://');
     }
@@ -229,7 +227,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
- 
+
       {/* ── FUNDADORES ── */}
       <section className="qs-founders" id="founders">
         <div className="qs-section-content">
@@ -244,21 +242,19 @@ export default function AboutPage() {
               fundadores.map((page) => {
                 const photo = getPhotoUrl(page);
                 const nameCleaned = page.title.rendered.replace(/<[^>]+>/g, '');
-                
+
                 return (
-                  <a
+                  <Link
                     key={page.id}
-                    href={page.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    to={`/quem-somos/conselheiro/${page.id}`}
                     className="qs-founder reveal"
                   >
                     <div className="qs-founder-photo">
                       {photo ? (
-                        <img 
-                          src={photo} 
-                          alt={nameCleaned} 
-                          loading="lazy" 
+                        <img
+                          src={photo}
+                          alt={nameCleaned}
+                          loading="lazy"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
@@ -267,13 +263,13 @@ export default function AboutPage() {
                     </div>
                     <span className="qs-founder-name" dangerouslySetInnerHTML={{ __html: page.title.rendered }} />
                     <span className="qs-founder-role">Conselheiro Fundador</span>
-                  </a>
+                  </Link>
                 );
               })
             ) : !carregando ? (
-               <p style={{textAlign: "center", width: "100%", gridColumn: "1 / -1"}}>Não foi possível carregar os conselheiros.</p>
+              <p style={{ textAlign: "center", width: "100%", gridColumn: "1 / -1" }}>Não foi possível carregar os conselheiros.</p>
             ) : (
-               <p style={{textAlign: "center", width: "100%", gridColumn: "1 / -1"}}>Carregando conselheiros...</p>
+              <p style={{ textAlign: "center", width: "100%", gridColumn: "1 / -1" }}>Carregando conselheiros…</p>
             )}
           </div>
         </div>
