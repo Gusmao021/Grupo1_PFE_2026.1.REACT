@@ -50,7 +50,6 @@
     max-width: 540px;
 }
 
-
 /* ─── CONTATO SECTION ─── */
 .contato-section {
     background: var(--surface-soft);
@@ -63,11 +62,12 @@
     display: grid;
     grid-template-columns: 1fr 1.4fr;
     gap: 32px;
-    align-items: stretch;
+    align-items: stretch; 
 }
 
 /* ─── INFO LATERAL ─── */
 .contato-info {
+    flex-grow: 1;
     background:
         radial-gradient(circle at 80% 100%, rgba(245, 184, 0, 0.12) 0%, transparent 60%),
         linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
@@ -233,7 +233,7 @@ a.info-value:hover {
     box-shadow: var(--shadow-lg);
     display: flex;
     flex-direction: column;
-    margin: 30px 0;
+    margin: 0;
 }
 
 .form-card .card-cat {
@@ -373,6 +373,69 @@ a.info-value:hover {
 
 .form-submit--gold:hover {
     box-shadow: 0 16px 32px rgba(245, 184, 0, 0.55);
+}
+
+/* ─── BANNER DE DOWNLOAD (INLINE FORM) ─── */
+.form-download-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(15, 15, 61, 0.03);
+    border: 1px solid rgba(15, 15, 61, 0.1);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.form-download-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.form-download-info svg {
+    width: 24px;
+    height: 24px;
+    color: var(--navy-600);
+    flex-shrink: 0;
+}
+
+.form-download-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin: 0 0 2px 0;
+}
+
+.form-download-info p {
+    font-size: 13px;
+    color: var(--ink-500);
+    margin: 0;
+}
+
+.inline-download-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy-800);
+    background: #ffffff;
+    border: 1px solid rgba(15, 15, 61, 0.15);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s var(--ease);
+}
+
+.inline-download-btn:hover {
+    background: var(--navy-700);
+    color: #ffffff;
+    border-color: var(--navy-700);
 }
 
 /* ─── ASSOCIE-SE ─── */

@@ -60,7 +60,8 @@ export default function Contato() {
     motivo: "",
   });
 
-  // Estado para capturar mensagens de erro customizadas
+  // Estados para capturar mensagens de erro customizadas
+  const [contactErrors, setContactErrors] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
   // Efeito para rolar a tela suavemente até a âncora
@@ -73,7 +74,7 @@ export default function Contato() {
     }
   }, [location]);
 
-  // Manipuladores de mudança (onChange) otimizados
+  // Manipuladores de mudança (onChange) otimizados com limpeza de erros
   const handleContactChange = (e) => {
     const { name, value } = e.target;
     let processedValue = value;
@@ -85,6 +86,11 @@ export default function Contato() {
     }
 
     setContactForm((prev) => ({ ...prev, [name]: processedValue }));
+
+    // Limpa o erro assim que o usuário digita
+    if (contactErrors[name]) {
+      setContactErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleAssocChange = (e) => {
@@ -105,18 +111,33 @@ export default function Contato() {
 
     setAssocForm((prev) => ({ ...prev, [name]: processedValue }));
 
-    // Limpa o erro do campo correspondente assim que o usuário digita algo válido
+    // Limpa o erro assim que o usuário digita
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  //Submissões controladas prontas para consumo de APIs
+  // Submissões controladas com validações customizadas via JavaScript
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    const errors = {};
+
+    // Validação de campos obrigatórios do formulário de contato
+    if (!contactForm.nome.trim()) errors.nome = "O nome é obrigatório.";
+    if (!contactForm.email.trim()) {
+      errors.email = "O e-mail é obrigatório.";
+    } else if (!/\S+@\S+\.\S+/.test(contactForm.email)) {
+      errors.email = "Insira um endereço de e-mail válido.";
+    }
+    if (!contactForm.assunto) errors.assunto = "Selecione um assunto.";
+    if (!contactForm.mensagem.trim()) errors.mensagem = "A mensagem é obrigatória.";
+
+    if (Object.keys(errors).length > 0) {
+      setContactErrors(errors);
+      return; // Interrompe o envio se houver erros
+    }
 
     try {
-      // Usamos o endpoint /ajax/ do FormSubmit para evitar o redirecionamento de página
       const response = await fetch("https://formsubmit.co/ajax/devwebtms@gmail.com", {
         method: "POST",
         headers: {
@@ -129,7 +150,6 @@ export default function Contato() {
       if (response.ok) {
         console.log("Submit Contato:", contactForm);
         alert("Mensagem enviada com sucesso!");
-        // Limpa o formulário após envio com sucesso
         setContactForm({ nome: "", email: "", assunto: "", mensagem: "" });
       } else {
         alert("Ocorreu um erro ao enviar a mensagem. Tente novamente.");
@@ -144,17 +164,33 @@ export default function Contato() {
     e.preventDefault();
     const errors = {};
 
-    // Validação estendida de tamanho mínimo com as máscaras aplicadas
-    if (assocForm.cpf.length < 14) {
+    // Validação de todos os campos obrigatórios do formulário de associação
+    if (!assocForm.nome.trim()) errors.nome = "O nome completo é obrigatório.";
+    
+    if (!assocForm.email.trim()) {
+      errors.email = "O e-mail é obrigatório.";
+    } else if (!/\S+@\S+\.\S+/.test(assocForm.email)) {
+      errors.email = "Insira um endereço de e-mail válido.";
+    }
+
+    if (!assocForm.cargo) errors.cargo = "Selecione o seu perfil.";
+    if (!assocForm.motivo.trim()) errors.motivo = "Por favor, preencha a sua motivação.";
+
+    if (!assocForm.cpf) {
+      errors.cpf = "O CPF é obrigatório.";
+    } else if (assocForm.cpf.length < 14) {
       errors.cpf = "Insira um CPF válido com 11 dígitos.";
     }
-    if (assocForm.cep.length < 9) {
+
+    if (!assocForm.cep) {
+      errors.cep = "O CEP é obrigatório.";
+    } else if (assocForm.cep.length < 9) {
       errors.cep = "Insira um CEP válido com 8 dígitos.";
     }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      return; // Interrompe o envio se houver inconsistências
+      return; // Interrompe o envio se houver erros
     }
 
     try {
@@ -309,7 +345,7 @@ export default function Contato() {
             <h3>Envie sua mensagem</h3>
             <p className="form-card-sub">Conte-nos como podemos ajudar.</p>
 
-            <form className="contato-form" onSubmit={handleContactSubmit}>
+            <form className="contato-form" onSubmit={handleContactSubmit} noValidate>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="contact-nome">
@@ -324,6 +360,7 @@ export default function Contato() {
                     onChange={handleContactChange}
                     required
                   />
+                  {contactErrors.nome && <span style={errorStyle}>{contactErrors.nome}</span>}
                 </div>
 
                 <div className="form-group">
@@ -339,6 +376,7 @@ export default function Contato() {
                     onChange={handleContactChange}
                     required
                   />
+                  {contactErrors.email && <span style={errorStyle}>{contactErrors.email}</span>}
                 </div>
               </div>
 
@@ -362,6 +400,7 @@ export default function Contato() {
                     <option value="Outros">Outros</option>
                   </select>
                 </div>
+                {contactErrors.assunto && <span style={errorStyle}>{contactErrors.assunto}</span>}
               </div>
 
               <div className="form-group">
@@ -377,6 +416,7 @@ export default function Contato() {
                   onChange={handleContactChange}
                   required
                 />
+                {contactErrors.mensagem && <span style={errorStyle}>{contactErrors.mensagem}</span>}
               </div>
 
               <button type="submit" className="form-submit">
@@ -459,7 +499,7 @@ export default function Contato() {
             <h3>Solicitação de associação</h3>
             <p className="form-card-sub">Preencha seus dados — entraremos em contato em até 2 dias úteis.</p>
 
-            <form className="contato-form" onSubmit={handleAssocSubmit}>
+            <form className="contato-form" onSubmit={handleAssocSubmit} noValidate>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="assoc-nome">
@@ -474,6 +514,7 @@ export default function Contato() {
                     onChange={handleAssocChange}
                     required
                   />
+                  {formErrors.nome && <span style={errorStyle}>{formErrors.nome}</span>}
                 </div>
 
                 <div className="form-group">
@@ -489,6 +530,7 @@ export default function Contato() {
                     onChange={handleAssocChange}
                     required
                   />
+                  {formErrors.email && <span style={errorStyle}>{formErrors.email}</span>}
                 </div>
               </div>
 
@@ -572,6 +614,7 @@ export default function Contato() {
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
+                {formErrors.cargo && <span style={errorStyle}>{formErrors.cargo}</span>}
               </div>
 
               <div className="form-group">
@@ -599,6 +642,26 @@ export default function Contato() {
                   onChange={handleAssocChange}
                   required
                 />
+                {formErrors.motivo && <span style={errorStyle}>{formErrors.motivo}</span>}
+              </div>
+
+              {/* NOVO: BANNER DE DOWNLOAD INLINE DENTRO DO FORMULÁRIO */}
+              <div className="form-download-inline">
+                <div className="form-download-info">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <path d="M12 18v-6" />
+                    <path d="M9 15l3 3 3-3" />
+                  </svg>
+                  <div>
+                    <h4>Código de Conduta</h4>
+                    <p>Recomendamos a leitura dos nossos princípios éticos antes de enviar a solicitação.</p>
+                  </div>
+                </div>
+                <a href="#" download="Codigo_de_Conduta_ACBrasil.pdf" className="inline-download-btn">
+                  Baixar Documento
+                </a>
               </div>
 
               <button type="submit" className="form-submit form-submit--gold">
