@@ -659,9 +659,16 @@ export default function Contato() {
                     <p>Recomendamos a leitura dos nossos princípios éticos antes de enviar a solicitação.</p>
                   </div>
                 </div>
-                <a href="#" download="Codigo_de_Conduta_ACBrasil.pdf" className="inline-download-btn">
-                  Baixar Documento
-                </a>
+                <a 
+  href="#" 
+  className="inline-download-btn"
+  onClick={(e) => {
+    e.preventDefault(); 
+    alert("Página em construção!");
+  }}
+>
+  Baixar Documento
+</a>
               </div>
 
               <button type="submit" className="form-submit form-submit--gold">
