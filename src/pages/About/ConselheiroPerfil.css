@@ -1,0 +1,321 @@
+/* ─── CONSELHEIRO PERFIL ─────────────────────────────────────────────────── */
+
+/* ── Wrapper ── */
+.cp-wrapper {
+  min-height: 70vh;
+  background: var(--surface-soft, #f5f5f8);
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif);
+}
+
+/* ── Breadcrumb ── */
+.cp-breadcrumb {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(15, 15, 61, 0.07);
+}
+
+.cp-breadcrumb-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 80px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-500, #5a5a75);
+}
+
+.cp-breadcrumb-inner a {
+  color: var(--navy-600, #2a2a85);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.cp-breadcrumb-inner a:hover {
+  color: var(--gold-600, #e0a500);
+}
+
+.cp-breadcrumb-sep {
+  color: var(--ink-300, #9a9ab0);
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ── Hero / Layout principal ── */
+.cp-hero {
+  padding: 72px 80px 96px;
+}
+
+.cp-hero-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 72px;
+  align-items: flex-start;
+}
+
+/* ── Coluna da foto ── */
+.cp-photo-col {
+  position: sticky;
+  top: 100px;
+}
+
+.cp-photo-frame {
+  position: relative;
+  border-radius: 20px;
+  overflow: visible;
+}
+
+.cp-photo-frame img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 20px;
+  display: block;
+  box-shadow: 0 20px 60px rgba(15, 15, 61, 0.18), 0 4px 16px rgba(15, 15, 61, 0.10);
+  position: relative;
+  z-index: 1;
+}
+
+/* Acento decorativo (quadrado gold atrás da foto) */
+.cp-photo-accent {
+  position: absolute;
+  bottom: -16px;
+  right: -16px;
+  width: 72%;
+  height: 72%;
+  background: linear-gradient(135deg, var(--gold-500, #f5b800) 0%, var(--gold-600, #e0a500) 100%);
+  border-radius: 16px;
+  z-index: 0;
+  opacity: 0.22;
+}
+
+.cp-avatar-fallback {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--navy-700, #1e1e6b) 0%, var(--navy-900, #0f0f3d) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: -0.03em;
+}
+
+/* ── Coluna de texto ── */
+.cp-info-col {
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cp-eyebrow {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--gold-500, #f5b800);
+  color: var(--navy-900, #0f0f3d);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  align-self: flex-start;
+}
+
+.cp-info-col h1 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 800;
+  color: var(--ink-900, #0a0a1f);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+/* ── Bio (conteúdo HTML do WordPress) ── */
+.cp-bio {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink-700, #2a2a45);
+}
+
+.cp-bio p {
+  margin-bottom: 16px;
+}
+
+.cp-bio p:last-child {
+  margin-bottom: 0;
+}
+
+.cp-bio strong {
+  color: var(--ink-900, #0a0a1f);
+  font-weight: 700;
+}
+
+.cp-bio a {
+  color: var(--navy-600, #2a2a85);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cp-bio a:hover {
+  color: var(--gold-600, #e0a500);
+}
+
+.cp-bio ul,
+.cp-bio ol {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+
+.cp-bio li {
+  margin-bottom: 6px;
+}
+
+.cp-bio h2,
+.cp-bio h3,
+.cp-bio h4 {
+  font-weight: 800;
+  color: var(--navy-800, #15154d);
+  margin: 24px 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.cp-bio--empty {
+  color: var(--ink-300, #9a9ab0);
+  font-style: italic;
+}
+
+/* ── Botão voltar ── */
+.cp-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 12px 24px;
+  background: var(--navy-900, #0f0f3d);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 10px;
+  align-self: flex-start;
+  transition: background 0.25s, transform 0.25s;
+  letter-spacing: 0.1px;
+}
+
+.cp-back-btn:hover {
+  background: var(--navy-700, #1e1e6b);
+  transform: translateY(-2px);
+}
+
+/* ── Loading ── */
+.cp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 20px;
+  color: var(--ink-500, #5a5a75);
+  font-size: 15px;
+}
+
+.cp-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(15, 15, 61, 0.1);
+  border-top-color: var(--navy-600, #2a2a85);
+  border-radius: 50%;
+  animation: cp-spin 0.8s linear infinite;
+}
+
+@keyframes cp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Erro ── */
+.cp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  text-align: center;
+  padding: 40px;
+}
+
+.cp-error h2 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink-900, #0a0a1f);
+  letter-spacing: -0.02em;
+}
+
+.cp-error p {
+  font-size: 15px;
+  color: var(--ink-500, #5a5a75);
+  max-width: 400px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cp-breadcrumb-inner {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .cp-hero {
+    padding: 56px 40px 72px;
+  }
+
+  .cp-hero-inner {
+    grid-template-columns: 300px 1fr;
+    gap: 48px;
+  }
+
+  .cp-photo-col {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .cp-breadcrumb-inner {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .cp-hero {
+    padding: 40px 24px 64px;
+  }
+
+  .cp-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .cp-photo-frame img,
+  .cp-avatar-fallback {
+    aspect-ratio: 1 / 1;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .cp-photo-frame {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cp-photo-accent {
+    display: none;
+  }
+
+  .cp-info-col h1 {
+    font-size: clamp(26px, 6vw, 36px);
+  }
+}

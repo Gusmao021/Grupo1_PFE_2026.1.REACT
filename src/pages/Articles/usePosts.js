@@ -13,7 +13,8 @@ export function usePosts() {
 
     const [totalPages, setTotalPages] = useState(1)
     const [totalPosts, setTotalPosts] = useState(0)
-    const [status, setStatus] = useState('loading')
+    
+    const [status, setStatus] = useState('loading') 
 
     const featuredId = featured?.id ?? null
 
@@ -34,8 +35,27 @@ export function usePosts() {
     }, [])
 
     useEffect(() => {
+        const t = setTimeout(() => {
+            setSearch(searchInput.trim())
+            setPage(1)
+            setStatus('loading') // <-- ADICIONADO AQUI
+        }, 350)
+        return () => clearTimeout(t)
+    }, [searchInput])
+
+    function handleSetPage(newPage) {
+        setPage(newPage)
+        setStatus('loading') // <-- ADICIONADO AQUI
+    }
+
+    function selectCategory(id) {
+        setCategoryId(id)
+        setPage(1)
+        setStatus('loading') // <-- ADICIONADO AQUI
+    }
+
+    useEffect(() => {
         let cancel = false
-        setStatus('loading')
 
         const excludeId = featuredId && page === 1 && !search && !categoryId ? featuredId : null
 
@@ -56,20 +76,6 @@ export function usePosts() {
         return () => { cancel = true }
     }, [page, categoryId, search, featuredId])
 
-    // debounce da busca
-    useEffect(() => {
-        const t = setTimeout(() => {
-            setSearch(searchInput.trim())
-            setPage(1)
-        }, 350)
-        return () => clearTimeout(t)
-    }, [searchInput])
-
-    function selectCategory(id) {
-        setCategoryId(id)
-        setPage(1)
-    }
-
     const pageNumbers = (() => {
         const totalToShow = Math.min(totalPages, 5)
         let start = Math.max(1, page - 2)
@@ -85,7 +91,7 @@ export function usePosts() {
         featured,
         posts,
         page,
-        setPage,
+        setPage: handleSetPage, 
         categoryId,
         searchInput,
         setSearchInput,

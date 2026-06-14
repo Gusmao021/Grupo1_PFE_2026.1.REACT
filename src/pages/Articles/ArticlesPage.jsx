@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import './ArticlesPage.css'
 import { usePosts } from './usePosts'
 import FeaturedCard from './FeaturedCard'
@@ -88,24 +88,42 @@ export default function ArticlesPage() {
                             placeholder="Buscar artigos..."
                             value={searchInput}
                             onChange={e => setSearchInput(e.target.value)}
+                            aria-label="Campo de busca para artigos"
                         />
                     </div>
-                    <div className="filter-pills">
-                        <button
-                            className={`filter-pill ${!categoryId ? 'active' : ''}`}
-                            onClick={() => selectCategory(null)}
+                    <div className="filter-select-wrap">
+                        <select
+                            className="filter-select"
+                            value={categoryId || ''}
+                            onChange={(e) => selectCategory(e.target.value || null)}
+                            aria-label="Filtrar por categoria"
                         >
-                            Todos
-                        </button>
-                        {categories.map(cat => (
-                            <button
-                                key={cat.id}
-                                className={`filter-pill ${String(categoryId) === String(cat.id) ? 'active' : ''}`}
-                                onClick={() => selectCategory(String(cat.id))}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
+                            <option value="">Todas as categorias</option>
+                            {categories.map(cat => {
+                                // Descodifica o &amp; para & e força o "a" a ficar maiúsculo
+                                const nomeCorrigido = cat.name
+                                    .replace(/&amp;/g, '&')
+                                    .replace('M&a', 'M&A');
+
+                                return (
+                                    <option key={cat.id} value={cat.id}>
+                                        {nomeCorrigido}
+                                    </option>
+                                )
+                            })}
+                        </select>
+                        {/* Ícone de seta apontando para baixo customizado */}
+                        <svg 
+                            className="select-icon" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                        >
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
                     </div>
                 </div>
             </section>

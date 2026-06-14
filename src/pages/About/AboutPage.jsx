@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './AboutPage.css';
 
 export default function AboutPage() {
@@ -10,21 +11,49 @@ export default function AboutPage() {
     const fetchFundadores = async () => {
       const WP_API = 'https://acbrasil.org.br/cms/wp-json/wp/v2';
       try {
-        const res = await fetch(`${WP_API}/pages?search=quem+somos&per_page=20&_embed=1`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const pages = await res.json();
+        const params = new URLSearchParams({
+          search: 'quem somos',
+          per_page: '20',
+          _embed: '1',
+          t: Date.now()
+        });
 
-        // Filtra apenas as páginas com foto destacada
-        // CORRIGIDO — exclui a página "Quem Somos" pelo título
-const data = pages.filter(p => {
-  const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-  const titulo = p.title?.rendered?.toLowerCase() ?? '';
-  const isQuemSomos = titulo.includes('quem somos') || titulo.includes('quem-somos');
-  return hasFoto && !isQuemSomos;
-});
-        setFundadores(data);
+        const res = await fetch(`${WP_API}/pages?${params.toString()}`, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!res.ok) {
+          console.error(`Erro HTTP: ${res.status}`);
+          setFundadores([]);
+          return;
+        }
+
+        const text = await res.text();
+        let pages = [];
+
+        try {
+          pages = JSON.parse(text);
+        } catch (e) {
+          console.error('A API não retornou um JSON válido. Detalhes:', e.message);
+        }
+
+        if (Array.isArray(pages)) {
+          const data = pages.filter(p => {
+            const hasFoto = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            const titulo = p.title?.rendered?.toLowerCase() ?? '';
+            const isQuemSomos = titulo.includes('quem somos') || titulo.includes('quem-somos');
+            return hasFoto && !isQuemSomos;
+          });
+          setFundadores(data);
+        } else {
+          setFundadores([]);
+        }
+
       } catch (err) {
-        console.warn('Falha ao carregar fundadores:', err);
+        console.error('Falha de conexão:', err.message);
+        setFundadores([]);
       } finally {
         setCarregando(false);
       }
@@ -61,14 +90,13 @@ const data = pages.filter(p => {
     const media = page._embedded?.['wp:featuredmedia']?.[0];
     if (!media) return null;
     const sizes = media.media_details?.sizes || {};
-    
+
     let url = sizes.medium_large?.source_url ||
               sizes.large?.source_url ||
               sizes.medium?.source_url ||
               media.source_url ||
               null;
 
-    // Força HTTPS para evitar bloqueio do navegador
     if (url && url.startsWith('http://')) {
       url = url.replace('http://', 'https://');
     }
@@ -199,7 +227,6 @@ const data = pages.filter(p => {
           </div>
         </div>
       </section>
- 
 
       {/* ── FUNDADORES ── */}
       <section className="qs-founders" id="founders">
@@ -215,21 +242,19 @@ const data = pages.filter(p => {
               fundadores.map((page) => {
                 const photo = getPhotoUrl(page);
                 const nameCleaned = page.title.rendered.replace(/<[^>]+>/g, '');
-                
+
                 return (
-                  <a
+                  <Link
                     key={page.id}
-                    href={page.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    to={`/quem-somos/conselheiro/${page.id}`}
                     className="qs-founder reveal"
                   >
                     <div className="qs-founder-photo">
                       {photo ? (
-                        <img 
-                          src={photo} 
-                          alt={nameCleaned} 
-                          loading="lazy" 
+                        <img
+                          src={photo}
+                          alt={nameCleaned}
+                          loading="lazy"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
@@ -238,13 +263,13 @@ const data = pages.filter(p => {
                     </div>
                     <span className="qs-founder-name" dangerouslySetInnerHTML={{ __html: page.title.rendered }} />
                     <span className="qs-founder-role">Conselheiro Fundador</span>
-                  </a>
+                  </Link>
                 );
               })
             ) : !carregando ? (
-               <p style={{textAlign: "center", width: "100%", gridColumn: "1 / -1"}}>Não foi possível carregar os conselheiros.</p>
+              <p style={{ textAlign: "center", width: "100%", gridColumn: "1 / -1" }}>Não foi possível carregar os conselheiros.</p>
             ) : (
-               <p style={{textAlign: "center", width: "100%", gridColumn: "1 / -1"}}>Carregando conselheiros...</p>
+              <p style={{ textAlign: "center", width: "100%", gridColumn: "1 / -1" }}>Carregando conselheiros…</p>
             )}
           </div>
         </div>

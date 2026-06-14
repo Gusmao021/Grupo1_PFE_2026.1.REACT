@@ -145,67 +145,55 @@
     box-shadow: 0 0 0 4px rgba(59, 59, 176, 0.12);
 }
 
-.filter-pills {
-    display: flex;
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(15, 15, 61, 0.2) transparent;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-    /* fade lateral pra indicar conteúdo cortado */
-    mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%);
+/* ─── FILTRO (SELECT) ─── */
+.filter-select-wrap {
+    position: relative;
+    flex: 1; /* Ocupa o restante do espaço ao lado do campo de busca */
+    min-width: 220px;
+    max-width: 320px;
 }
 
-.filter-pills::-webkit-scrollbar {
-    height: 6px;
-}
-
-.filter-pills::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.filter-pills::-webkit-scrollbar-thumb {
-    background: rgba(15, 15, 61, 0.18);
+.filter-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--surface-soft);
+    border: 1px solid rgba(15, 15, 61, 0.08);
     border-radius: 999px;
-}
-
-.filter-pills::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 15, 61, 0.32);
-}
-
-.filter-pill {
-    flex-shrink: 0;
-}
-
-.filter-pill {
-    padding: 9px 20px;
+    padding: 11px 40px 11px 20px;
     font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink-700);
-    background: transparent;
-    border: 1px solid rgba(15, 15, 61, 0.1);
-    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-900);
     cursor: pointer;
     transition: all 0.3s var(--ease);
+    outline: none;
 }
 
-.filter-pill:hover {
+.filter-select:hover {
+    border-color: rgba(15, 15, 61, 0.2);
+}
+
+.filter-select:focus {
+    background: #ffffff;
     border-color: var(--navy-500);
-    color: var(--navy-700);
+    box-shadow: 0 0 0 4px rgba(59, 59, 176, 0.12);
 }
 
-.filter-pill.active {
-    background: var(--navy-800);
-    color: #ffffff;
-    border-color: var(--navy-800);
-    box-shadow: 0 6px 16px rgba(15, 15, 61, 0.2);
+/* Esconde o placeholder em alguns navegadores quando selecionado */
+.filter-select option[value=""][disabled] {
+    display: none;
+}
+
+.select-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--ink-500);
+    pointer-events: none; /* Garante que clicar no ícone abra o select normalmente */
 }
 
 /* ─── FEATURED ─── */
@@ -388,13 +376,13 @@
     position: relative;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background: var(--surface-muted);
+    background: transparent; 
 }
 
 .pub-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; 
     transition: transform 0.8s var(--ease);
 }
 
@@ -405,7 +393,7 @@
 .pub-cat {
     position: absolute;
     left: 20px;
-    bottom: 16px;
+    top: 16px; 
     padding: 6px 14px;
     background: var(--gold-500);
     color: var(--navy-800);
@@ -578,15 +566,6 @@
     .search-wrap {
         flex: none;
         width: 100%;
-    }
-
-    .filter-pills {
-        flex: none;
-        width: 100%;
-        max-width: 100%;
-        /* desativa a máscara no mobile para evitar bugs de renderização */
-        mask-image: none;
-        -webkit-mask-image: none;
     }
 
     .publications-grid {
