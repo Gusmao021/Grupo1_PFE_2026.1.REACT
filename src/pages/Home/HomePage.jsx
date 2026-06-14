@@ -76,6 +76,29 @@ const associadosDefault = [
   { img: "/images/associado-3.jpg", tag: "Conselheiro", title: "Associado 3", text: "Conselheiro associado da ACBrasil.", link: null },
 ];
  
+const podcastsDefault = [
+  { id: 1, title: "Perspectivas 2026: os temas de RH que devem estar na pauta dos conselhos de administração", duration: "37 min", date: "30 Jan 2026", link: "https://www.youtube.com/watch?v=qegAIFMF7bI&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=3" },
+  { id: 2, title: "O Futuro da Saúde no Brasil: Longevidade, Acesso e Sustentabilidade", duration: "75 min", date: "28 Mar 2026", link: "https://www.youtube.com/watch?v=Yn2WBBxed04&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=2" },
+  { id: 3, title: "O impacto dos conflitos geracionais nas organizações e os caminhos para transformar a diversidade de idades e visões em inovação e crescimento coletivo.", duration: "46 min", date: "17 Out 2025", link: "https://www.youtube.com/watch?v=q7B2JJcgAvY&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=3" },
+];
+
+const webinarsDefault = [
+  { 
+    id: 1, 
+    title: "Sucessão em empresas familiares", 
+    thumb: "https://img.youtube.com/vi/HdorDmrsMRI/hqdefault.jpg", 
+    tag: "GRAVADO", 
+    link: "https://www.youtube.com/watch?v=HdorDmrsMRI&list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N&index=22" 
+  },
+  { 
+    id: 2, 
+    title: "Sustentabilidade como fundamento", 
+    thumb: "https://img.youtube.com/vi/uqrQNUZI6DE/hqdefault.jpg", 
+    tag: "GRAVADO", 
+    link: "https://www.youtube.com/watch?v=uqrQNUZI6DE&list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N&index=20" 
+  },
+];
+
 const mercadoDefault = {
   ibov: { label: "IBOVESPA", value: "128.450", change: "▲ 0,84%", isPositive: true, series: null },
   usd: { label: "USD/BRL", value: "R$ 5,72", change: "▼ 0,31%", isPositive: false, series: null },
@@ -182,7 +205,9 @@ function HomePage() {
   const [slide, setSlide] = useState(0);
   const [tab, setTab] = useState("artigos");
   const revealRefs = useRef([]);
- 
+  const [podcasts] = useState(podcastsDefault);
+  const [webinars] = useState(webinarsDefault);
+
   // ── Imagens reais do hero ──
   useEffect(() => {
     fetchHeroImages(5).then((urls) => {
@@ -391,6 +416,77 @@ function HomePage() {
         </div>
       </section>
  
+     {/* ── MULTIMÍDIA (PODCASTS E WEBINARS) ── */}
+      <section className="multimidia">
+        <div className="multimidia-content">
+          <div className="multimidia-grid reveal" ref={addReveal}>
+            
+            {/* Coluna de Podcasts */}
+            <div className="multimidia-col">
+              <div className="multimidia-col-header">
+                <h3 className="multimidia-col-title">Últimos Episódios do Nosso Podcast</h3>
+                <a 
+                  href="https://www.youtube.com/playlist?list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="multimidia-link"
+                >
+                  Ver todos →
+                </a>
+              </div>
+              <div className="podcast-list">
+                {podcasts.map((p) => (
+                  <a href={p.link} target="_blank" rel="noopener noreferrer" key={p.id} className="podcast-item">
+                    <div className="podcast-play">
+                      <span>▶</span>
+                    </div>
+                    <div className="podcast-info">
+                      <h4>{p.title}</h4>
+                      <div className="podcast-meta">
+                        <span>🕒 {p.duration}</span>
+                        <span>📅 {p.date}</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Coluna de Webinars */}
+            <div className="multimidia-col">
+              <div className="multimidia-col-header">
+                <h3 className="multimidia-col-title">Webinars em Destaque</h3>
+                <a 
+                  href="https://www.youtube.com/playlist?list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="multimidia-link"
+                >
+                  Ver todos →
+                </a>
+              </div>
+              <div className="webinar-list">
+                {webinars.map((w) => (
+                  <a href={w.link} target="_blank" rel="noopener noreferrer" key={w.id} className="webinar-card">
+                    <div className="webinar-thumb">
+                      {w.thumb && <img src={w.thumb} alt={w.title} loading="lazy" />}
+                      <div className="webinar-play-overlay">
+                        <div>▶</div>
+                      </div>
+                    </div>
+                    <div className="webinar-info">
+                      <span className="webinar-tag">{w.tag}</span>
+                      <h4>{w.title}</h4>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── JORNADA CTA ── */}
       <section className="jornada">
         <div className="jornada-content">
@@ -407,11 +503,11 @@ function HomePage() {
             </a>
           </div>
           <div className="jornada-image reveal" ref={addReveal}>
-            <img src="/images/jornada.jpg" alt="Membros ACB" />
+            <img src="/images/jornada.webp" alt="Membros ACB" />
           </div>
         </div>
       </section>
- 
+
       {/* ── MERCADO & ECONOMIA ── */}
       <section className="mercado">
         <div className="mercado-content">
