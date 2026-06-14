@@ -15,13 +15,21 @@ export default function ArticlePage() {
     const [post, setPost] = useState(null)
     const [status, setStatus] = useState('loading') // loading | ok | notfound | error
 
-    useEffect(() => {
+   useEffect(() => {
         let active = true
-        setStatus('loading')
-        setPost(null)
+        let isFetching = true // Trava de segurança contra internet rápida demais
+
+        // Joga o reset para o próximo ciclo de eventos (evita o erro de Cascading Renders)
+        setTimeout(() => {
+            if (active && isFetching) {
+                setStatus('loading')
+                setPost(null)
+            }
+        }, 0)
 
         fetchPostBySlug(slug)
             .then(data => {
+                isFetching = false // A API respondeu
                 if (!active) return
                 if (!data) {
                     setStatus('notfound')
@@ -30,7 +38,10 @@ export default function ArticlePage() {
                 setPost(data)
                 setStatus('ok')
             })
-            .catch(() => active && setStatus('error'))
+            .catch(() => {
+                isFetching = false
+                if (active) setStatus('error')
+            })
 
         return () => {
             active = false

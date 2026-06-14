@@ -120,7 +120,6 @@
 }
 
 /* Estados (loading / erro / não encontrado) */
-/* Estados (loading / erro / não encontrado) */
 .article-state {
     display: flex;
     flex-direction: column;
