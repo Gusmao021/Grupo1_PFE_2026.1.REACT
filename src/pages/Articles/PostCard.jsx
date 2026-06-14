@@ -4,12 +4,17 @@ import { pickImage, pickCategoryName, stripHtml, formatDate, readingTime } from 
 export default function PostCard({ post }) {
     const img = pickImage(post)
     const title = stripHtml(post.title.rendered)
+    
+    // Filtro de limpeza do nome da categoria
+    const rawCatName = pickCategoryName(post) || '';
+    const catName = rawCatName.replace(/&amp;/g, '&').replace('M&a', 'M&A');
 
     return (
         <article className="pub-card reveal">
             <div className="pub-image">
                 {img && <img src={img} alt={title} loading="lazy" />}
-                <span className="pub-cat">{pickCategoryName(post)}</span>
+                {/* Usamos a nossa variável limpa aqui */}
+                <span className="pub-cat">{catName}</span>
             </div>
             <div className="pub-body">
                 <span className="pub-meta">
