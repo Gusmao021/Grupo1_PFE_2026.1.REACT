@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import {
   fetchHeroImages,
@@ -11,11 +12,16 @@ import {
   getUsdBrl,
   getSelic,
 } from "../../services/stockMarketApi";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  YAxis,
+  Tooltip,
+} from "recharts";
  
-// ──────────────────────────────────────────────────────────────
-// Fallbacks: dados estaticos que aparecem antes da API responder
-// (ou caso ela falhe). Garantem que a Home nunca quebra.
-// ──────────────────────────────────────────────────────────────
+
+
  
 const heroSlidesDefault = [
   {
@@ -70,16 +76,115 @@ const associadosDefault = [
   { img: "/images/associado-3.jpg", tag: "Conselheiro", title: "Associado 3", text: "Conselheiro associado da ACBrasil.", link: null },
 ];
  
+const podcastsDefault = [
+  { id: 1, title: "Perspectivas 2026: os temas de RH que devem estar na pauta dos conselhos de administração", duration: "37 min", date: "30 Jan 2026", link: "https://www.youtube.com/watch?v=qegAIFMF7bI&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=3" },
+  { id: 2, title: "O Futuro da Saúde no Brasil: Longevidade, Acesso e Sustentabilidade", duration: "75 min", date: "28 Mar 2026", link: "https://www.youtube.com/watch?v=Yn2WBBxed04&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=2" },
+  { id: 3, title: "O impacto dos conflitos geracionais nas organizações e os caminhos para transformar a diversidade de idades e visões em inovação e crescimento coletivo.", duration: "46 min", date: "17 Out 2025", link: "https://www.youtube.com/watch?v=q7B2JJcgAvY&list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO&index=3" },
+];
+
+const webinarsDefault = [
+  // A estrutura da imagem do Youtube é sempre: https://img.youtube.com/vi/ID_DO_VIDEO/maxresdefault.jpg
+  { 
+    id: 1, 
+    title: "Sucessão em empresas familiares", 
+    thumb: "https://img.youtube.com/vi/HdorDmrsMRI/hqdefault.jpg", 
+    tag: "GRAVADO", 
+    link: "https://www.youtube.com/watch?v=HdorDmrsMRI&list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N&index=22" 
+  },
+  { 
+    id: 2, 
+    title: "Sustentabilidade como fundamento", 
+    thumb: "https://img.youtube.com/vi/uqrQNUZI6DE/hqdefault.jpg", // Substitua pelo ID real depois
+    tag: "GRAVADO", 
+    link: "https://www.youtube.com/watch?v=uqrQNUZI6DE&list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N&index=20" 
+  },
+];
+
 const mercadoDefault = {
-  ibov: { label: "IBOVESPA", value: "128.450", change: "▲ 0,84%", isPositive: true, sparkline: null },
-  usd: { label: "USD/BRL", value: "R$ 5,72", change: "▼ 0,31%", isPositive: false, sparkline: null },
-  selic: { label: "SELIC", value: "10,50%", change: "Meta anual", isNeutral: true },
+  ibov: { label: "IBOVESPA", value: "128.450", change: "▲ 0,84%", isPositive: true, series: null },
+  usd: { label: "USD/BRL", value: "R$ 5,72", change: "▼ 0,31%", isPositive: false, series: null },
+  selic: { label: "SELIC", value: "10,50%", change: "Meta anual", isNeutral: true, series: null },
   updatedAt: null,
 };
- 
-// Sparklines de fallback (caso a API nao traga dados historicos)
-const SPARKLINE_FALLBACK_GREEN = "0,50 30,42 60,38 90,30 120,35 160,20 200,15";
-const SPARKLINE_FALLBACK_RED = "0,10 30,18 60,22 90,28 120,35 160,42 200,50";
+
+// Series de fallback (caso a API nao traga dados historicos)
+const SERIES_FALLBACK = {
+  ibov: [126100, 126800, 127200, 126900, 127600, 128100, 128450],
+  usd: [5.6, 5.63, 5.61, 5.66, 5.68, 5.7, 5.72],
+  // SELIC em "degraus" (cortes graduais do Copom)
+  selic: [11.25, 11.25, 10.75, 10.75, 10.5, 10.5],
+};
+
+// Formatadores de valor pro tooltip de cada indicador
+const fmt = {
+  ibov: (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 0 }),
+  usd: (v) =>
+    `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+  selic: (v) =>
+    `${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`,
+};
+
+
+
+function SparkTooltip({ active, payload, color, formatValue }) {
+  if (!active || !payload || !payload.length) return null;
+  const v = payload[0].value;
+  return (
+    <div className="spark-tip" style={{ borderColor: color }}>
+      <span className="spark-tip-dot" style={{ background: color }} />
+      {formatValue ? formatValue(v) : v}
+    </div>
+  );
+}
+
+function Sparkline({ data, color, gradId, formatValue }) {
+  const chartData = (data && data.length ? data : [0, 0]).map((v, i) => ({ i, v }));
+  const lastIdx = chartData.length - 1;
+
+  // Ponto pulsante apenas no ultimo valor (pulso via SMIL, sem distorcao)
+  const renderDot = (props) => {
+    const { cx, cy, index } = props;
+    if (index !== lastIdx || cx == null || cy == null) return <g key={`d-${index}`} />;
+    return (
+      <g key={`d-${index}`}>
+        <circle cx={cx} cy={cy} r={3.5} fill={color} opacity={0.3}>
+          <animate attributeName="r" values="3.5;9;3.5" dur="2.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0;0.35" dur="2.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx={cx} cy={cy} r={3.2} fill={color} stroke="#fff" strokeWidth={1.6} />
+      </g>
+    );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={80}>
+      <AreaChart data={chartData} margin={{ top: 8, right: 10, bottom: 4, left: 10 }}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.32} />
+            <stop offset="95%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <YAxis hide domain={["dataMin", "dataMax"]} />
+        <Tooltip
+          cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "3 3" }}
+          content={<SparkTooltip color={color} formatValue={formatValue} />}
+        />
+        <Area
+          type="monotone"
+          dataKey="v"
+          stroke={color}
+          strokeWidth={2.5}
+          fill={`url(#${gradId})`}
+          dot={renderDot}
+          activeDot={{ r: 4, strokeWidth: 0, fill: color }}
+          isAnimationActive
+          animationDuration={1100}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
  
 function formatUpdate(date) {
   if (!date) return "Atualizado: --";
@@ -92,6 +197,7 @@ function formatUpdate(date) {
 // ──────────────────────────────────────────────────────────────
  
 function HomePage() {
+  const navigate = useNavigate();
   const [heroSlides, setHeroSlides] = useState(heroSlidesDefault);
   const [artigos, setArtigos] = useState(artigosDefault);
   const [associados, setAssociados] = useState(associadosDefault);
@@ -100,7 +206,9 @@ function HomePage() {
   const [slide, setSlide] = useState(0);
   const [tab, setTab] = useState("artigos");
   const revealRefs = useRef([]);
- 
+  const [podcasts] = useState(podcastsDefault);
+  const [webinars] = useState(webinarsDefault);
+
   // ── Imagens reais do hero ──
   useEffect(() => {
     fetchHeroImages(5).then((urls) => {
@@ -177,9 +285,14 @@ function HomePage() {
  
   const cards = tab === "artigos" ? artigos : associados;
  
-  // Helper: abre o link do card em nova aba (se houver)
-  const openCard = (link) => {
-    if (link) window.open(link, "_blank", "noopener,noreferrer");
+  // Clique no card: artigos com slug abrem a página interna;
+  // demais (associados) seguem abrindo o link externo em nova aba.
+  const openCard = (card) => {
+    if (card.slug) {
+      navigate(`/artigos/${card.slug}`);
+    } else if (card.link) {
+      window.open(card.link, "_blank", "noopener,noreferrer");
+    }
   };
  
   // Helper: classe de mudanca (positive / negative / neutral)
@@ -284,10 +397,14 @@ function HomePage() {
  
           {cards.map((c, i) => (
             <div
-              className="card card--photo"
+              className={`card card--photo ${tab === "associados" ? "card--retrato" : "card--banner"}`}
               key={i}
-              onClick={() => openCard(c.link)}
-              style={c.link ? { cursor: "pointer" } : undefined}
+              onClick={() => openCard(c)}
+              style={{
+                ...(c.slug || c.link ? { cursor: "pointer" } : {}),
+                // o mesmo banner vira fundo desfocado atrás da imagem inteira
+                ...(tab === "artigos" && c.img ? { backgroundImage: `url(${c.img})` } : {}),
+              }}
             >
               {c.img && <img src={c.img} alt={c.title} loading="lazy" />}
               <div className="card-overlay">
@@ -300,6 +417,77 @@ function HomePage() {
         </div>
       </section>
  
+     {/* ── MULTIMÍDIA (PODCASTS E WEBINARS) ── */}
+      <section className="multimidia">
+        <div className="multimidia-content">
+          <div className="multimidia-grid reveal" ref={addReveal}>
+            
+            {/* Coluna de Podcasts */}
+            <div className="multimidia-col">
+              <div className="multimidia-col-header">
+                <h3 className="multimidia-col-title">Últimos Episódios do Nosso Podcast</h3>
+                <a 
+                  href="https://www.youtube.com/playlist?list=PL98yzQXxvQjVDk60HdOp9dySACtnJErRO" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="multimidia-link"
+                >
+                  Ver todos →
+                </a>
+              </div>
+              <div className="podcast-list">
+                {podcasts.map((p) => (
+                  <a href={p.link} target="_blank" rel="noopener noreferrer" key={p.id} className="podcast-item">
+                    <div className="podcast-play">
+                      <span>▶</span>
+                    </div>
+                    <div className="podcast-info">
+                      <h4>{p.title}</h4>
+                      <div className="podcast-meta">
+                        <span>🕒 {p.duration}</span>
+                        <span>📅 {p.date}</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Coluna de Webinars */}
+            <div className="multimidia-col">
+              <div className="multimidia-col-header">
+                <h3 className="multimidia-col-title">Webinars em Destaque</h3>
+                <a 
+                  href="https://www.youtube.com/playlist?list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="multimidia-link"
+                >
+                  Ver todos →
+                </a>
+              </div>
+              <div className="webinar-list">
+                {webinars.map((w) => (
+                  <a href={w.link} target="_blank" rel="noopener noreferrer" key={w.id} className="webinar-card">
+                    <div className="webinar-thumb">
+                      {w.thumb && <img src={w.thumb} alt={w.title} loading="lazy" />}
+                      <div className="webinar-play-overlay">
+                        <div>▶</div>
+                      </div>
+                    </div>
+                    <div className="webinar-info">
+                      <span className="webinar-tag">{w.tag}</span>
+                      <h4>{w.title}</h4>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── JORNADA CTA ── */}
       <section className="jornada">
         <div className="jornada-content">
@@ -311,16 +499,16 @@ function HomePage() {
               despertar a consciência sobre a importância da governança, transformando positivamente
               a realidade das empresas brasileiras, em especial as PMEs.
             </p>
-            <a href="/contato#associe-form" className="btn-outline">
+            <a href="/contato#associe-form" className="btn-primary">
               Associe-se agora
             </a>
           </div>
           <div className="jornada-image reveal" ref={addReveal}>
-            <img src="/images/jornada.jpg" alt="Membros ACB" />
+            <img src="/images/jornada.webp" alt="Membros ACB" />
           </div>
         </div>
       </section>
- 
+
       {/* ── MERCADO & ECONOMIA ── */}
       <section className="mercado">
         <div className="mercado-content">
@@ -361,46 +549,32 @@ function HomePage() {
             <div className="charts reveal" ref={addReveal}>
               <div className="chart-box">
                 <span className="chart-title">Ibovespa — últimos pregões</span>
-                <svg viewBox="0 0 200 60" className="sparkline sparkline--green" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#16a34a" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#16a34a" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <polygon
-                    points={`${mercado.ibov.sparkline || SPARKLINE_FALLBACK_GREEN} 200,60 0,60`}
-                    fill="url(#gradGreen)"
-                  />
-                  <polyline
-                    points={mercado.ibov.sparkline || SPARKLINE_FALLBACK_GREEN}
-                    fill="none"
-                    stroke="#16a34a"
-                    strokeWidth="2.5"
-                  />
-                </svg>
+                <Sparkline
+                  data={mercado.ibov.series || SERIES_FALLBACK.ibov}
+                  color="#16a34a"
+                  gradId="gradGreen"
+                  formatValue={fmt.ibov}
+                />
               </div>
- 
+
               <div className="chart-box">
                 <span className="chart-title">Câmbio USD/BRL — 7 dias</span>
-                <svg viewBox="0 0 200 60" className="sparkline sparkline--red" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#dc2626" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#dc2626" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <polygon
-                    points={`${mercado.usd.sparkline || SPARKLINE_FALLBACK_RED} 200,60 0,60`}
-                    fill="url(#gradRed)"
-                  />
-                  <polyline
-                    points={mercado.usd.sparkline || SPARKLINE_FALLBACK_RED}
-                    fill="none"
-                    stroke="#dc2626"
-                    strokeWidth="2.5"
-                  />
-                </svg>
+                <Sparkline
+                  data={mercado.usd.series || SERIES_FALLBACK.usd}
+                  color="#dc2626"
+                  gradId="gradRed"
+                  formatValue={fmt.usd}
+                />
+              </div>
+
+              <div className="chart-box">
+                <span className="chart-title">SELIC — meta (Copom)</span>
+                <Sparkline
+                  data={mercado.selic.series || SERIES_FALLBACK.selic}
+                  color="#f5b800"
+                  gradId="gradGold"
+                  formatValue={fmt.selic}
+                />
               </div>
             </div>
           </div>
