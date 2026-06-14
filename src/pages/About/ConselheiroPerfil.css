@@ -21,7 +21,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--ink-500, #5a5a75);
+  color: var(--ink-700, #2a2a45);
 }
 
 .cp-breadcrumb-inner a {
@@ -32,11 +32,12 @@
 }
 
 .cp-breadcrumb-inner a:hover {
-  color: var(--gold-600, #e0a500);
+  color: var(--navy-900, #0f0f3d);
+  text-decoration: underline;
 }
 
 .cp-breadcrumb-sep {
-  color: var(--ink-300, #9a9ab0);
+  color: var(--ink-500, #5a5a75);
   font-size: 15px;
   line-height: 1;
 }
@@ -130,7 +131,7 @@
 .cp-info-col h1 {
   font-size: clamp(28px, 3.5vw, 44px);
   font-weight: 800;
-  color: var(--ink-900, #0a0a1f);
+  color: var(--navy-600, #2a2a85); 
   line-height: 1.1;
   letter-spacing: -0.03em;
   margin: 0;

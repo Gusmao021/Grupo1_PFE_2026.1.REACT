@@ -8,7 +8,15 @@ export default function ConselheiroPerfil() {
   const { id } = useParams();
   const [conselheiro, setConselheiro] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState(false)
+ 
+  
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);;
 
   useEffect(() => {
     const fetchConselheiro = async () => {
@@ -54,9 +62,53 @@ export default function ConselheiroPerfil() {
 
   const getConteudo = (page) => {
     const raw = page.content?.rendered || '';
-    // Remove parágrafos vazios
-    return raw.replace(/<p>(\s|&nbsp;)*<\/p>/g, '').trim();
+    if (!raw) return '';
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = raw;
+
+    // 1. Remove qualquer cabeçalho (h1, h2, h3) do WordPress
+    tempDiv.querySelectorAll('h1, h2, h3, h4').forEach(el => el.remove());
+
+    // 2. Remoção cirúrgica do lixo de navegação
+    tempDiv.querySelectorAll('p, span, div, a').forEach(el => {
+      const txt = el.textContent.trim();
+      
+      // TRAVA: Se for grande, é a biografia! Ignora.
+      if (txt.length > 60) return; 
+
+      if (
+        txt === 'Associados fundadores' ||
+        txt === 'Início' ||
+        txt === 'Sample Page' ||
+        txt === 'Início / Sample Page' ||
+        txt === 'Início /' ||
+        txt.includes('Todos os associados')
+      ) {
+        el.remove();
+      }
+    });
+
+    // 3. A MÁGICA CONTRA OS BURACOS: Destrói caixas vazias e estilos forçados
+    // Pegamos todos os elementos e olhamos de dentro para fora (.reverse())
+    const todosElementos = Array.from(tempDiv.querySelectorAll('*')).reverse();
+    
+    todosElementos.forEach(el => {
+      const temTexto = el.textContent.trim().length > 0;
+      const temImagem = el.querySelector('img') !== null || el.tagName === 'IMG';
+      
+      // Se não tem texto nenhum e não tem imagem, é um "fantasma" de layout. Apaga!
+      if (!temTexto && !temImagem) {
+        el.remove();
+      } else {
+        // Se tem conteúdo útil, removemos os estilos inline (margens/paddings gigantes do WP)
+        el.removeAttribute('style');
+      }
+    });
+
+    return tempDiv.innerHTML.trim();
   };
+
 
   /* ── Loading ── */
   if (carregando) {
