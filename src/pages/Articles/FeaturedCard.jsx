@@ -4,11 +4,20 @@ import { pickImage, pickCategoryName, stripHtml, formatDate, readingTime } from 
 export default function FeaturedCard({ post }) {
     const img = pickImage(post)
 
+    // Filtro de limpeza do nome da categoria
+    const rawCatName = pickCategoryName(post) || '';
+    const catName = rawCatName.replace(/&amp;/g, '&').replace('M&a', 'M&A');
+
     const backgroundStyle = img
         ? {
-            backgroundImage: `linear-gradient(135deg, rgba(15,15,61,0.85) 0%, rgba(30,30,107,0.85) 100%), url(${img})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundImage: `
+                linear-gradient(135deg, rgba(15, 15, 61, 0.88) 0%, rgba(30, 30, 107, 0.88) 100%), 
+                url(${img}), 
+                url(${img})
+            `,
+            backgroundSize: 'cover, contain, cover',
+            backgroundPosition: 'center, center, center',
+            backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
         }
         : undefined
 
@@ -19,7 +28,8 @@ export default function FeaturedCard({ post }) {
                     <span className="featured-tag">Em destaque</span>
                 </div>
                 <div className="featured-right">
-                    <span className="card-cat">{pickCategoryName(post)}</span>
+                    {/* Usamos a nossa variável limpa aqui */}
+                    <span className="card-cat">{catName}</span>
                     <h2 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
                     <p>{stripHtml(post.excerpt.rendered).slice(0, 220) + '…'}</p>
                     <div className="featured-meta">
