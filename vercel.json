@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/acb-api/:path*", "destination": "https://acbrasil.org.br/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

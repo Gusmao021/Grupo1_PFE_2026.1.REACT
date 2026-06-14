@@ -20,12 +20,8 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/quem-somos" element={<AboutPage />} />
           <Route path="/artigos" element={<ArticlesPage />} />
-          
-          {/* A key garante que o componente resete seus estados totalmente ao trocar de artigo */}
-          <Route path="/artigos/:slug" element={<ArticlePage key={location.pathname} />} />
-          
+          <Route path="/artigos/:slug" element={<ArticlePage />} />
           <Route path="/contato" element={<ContactPage />} />
-          <Route path="/quem-somos/conselheiro/:id" element={<ConselheiroPerfil />} />
         </Routes>
       </div>
       <Footer />
