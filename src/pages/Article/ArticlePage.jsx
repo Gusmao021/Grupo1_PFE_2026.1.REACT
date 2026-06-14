@@ -17,26 +17,20 @@ export default function ArticlePage() {
 
     useEffect(() => {
         let active = true
+        setStatus('loading')
+        setPost(null)
 
-        const carregarArtigo = async () => {
-            try {
-                const data = await fetchPostBySlug(slug)
-                
+        fetchPostBySlug(slug)
+            .then(data => {
                 if (!active) return
-                
                 if (!data) {
                     setStatus('notfound')
                     return
                 }
-                
                 setPost(data)
                 setStatus('ok')
-            } catch {
-                if (active) setStatus('error')
-            }
-        }
-
-        carregarArtigo()
+            })
+            .catch(() => active && setStatus('error'))
 
         return () => {
             active = false

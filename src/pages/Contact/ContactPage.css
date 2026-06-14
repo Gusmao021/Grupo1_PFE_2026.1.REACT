@@ -3,7 +3,7 @@
     background:
         radial-gradient(circle at 90% 50%, rgba(245, 184, 0, 0.08) 0%, transparent 50%),
         linear-gradient(135deg, #0f0f3d 0%, #1a1a5e 50%, #2a2a85 100%);
-    padding: 72px 80px 88px;
+    padding: 32px 80px 38px;
     position: relative;
     overflow: hidden;
 }
@@ -100,12 +100,13 @@
 .contato-info .card-cat {
     display: inline-block;
     align-self: flex-start;
-    padding: 6px 0;
     color: var(--gold-500);
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 1.5px;
     text-transform: uppercase;
+    padding: 6px 0px;
+    background: transparent;
 }
 
 .contato-info h2 {
