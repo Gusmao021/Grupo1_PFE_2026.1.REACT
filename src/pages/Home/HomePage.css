@@ -341,61 +341,70 @@
     background: var(--ink-300);
     cursor: pointer;
 }
- 
+
 .card--photo img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.8s var(--ease);
+    z-index: 1;
 }
- 
+
 .card--photo:hover img {
     transform: scale(1.08);
 }
 
-/* Fotos de pessoas: ancora no topo pra não cortar a cabeça */
-.card--retrato img {
-    object-position: center top;
-}
-
-/* Banners de artigo: mostra a imagem inteira, sem cortar o conteúdo.
-   O fundo é o próprio banner desfocado, preenchendo as faixas vazias. */
-.card--banner {
-    background-size: cover;
-    background-position: center;
-}
-
-.card--banner::before {
-    content: "";
+/* ── BASE DO TEXTO (Usado pelos Associados) ── */
+.card-overlay {
     position: absolute;
-    inset: 0;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(15, 15, 61, 0.35);
+    inset: 0; /* Cobre o card inteiro */
+    z-index: 2; /* Fica acima da foto */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Empurra o texto para a base */
+    padding: 24px;
+    background: linear-gradient(to top, rgba(15, 15, 61, 0.95) 0%, transparent 60%);
+    transition: opacity 0.3s var(--ease);
+}
+
+.card--retrato img {
+    object-position: center top; /* Evita cortar o rosto dos conselheiros */
+}
+
+.card--retrato:hover .card-overlay {
+    opacity: 0; /* Oculta o texto no hover para focar na foto do associado */
+}
+
+/* ── ARTIGOS (Banner Dividido) ── */
+.card--banner {
+    background: transparent; 
 }
 
 .card--banner img {
-    position: relative;
-    object-fit: contain;
+    height: 60%; 
+    width: 100%; 
+    object-fit: contain; 
+    object-position: center; 
+    background: transparent; /* Permite que o azul escuro apareça nas sobras laterais */
+    padding: 12px; /* Um leve respiro para a imagem não colar no teto do card */
 }
 
-.card-overlay {
-    position: absolute;
-    inset: 0;
-    padding: 24px;
-    background: linear-gradient(to top, rgba(15, 15, 61, 0.92) 0%, rgba(15, 15, 61, 0.35) 35%, transparent 60%);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    transition: opacity 0.4s var(--ease);
+.card--banner .card-overlay {
+    top: 60%; 
+    /* O texto continua no mesmo fundo azul escuro, criando uma união perfeita com o topo */
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+    justify-content: flex-start; 
+    padding: 20px 24px;
 }
 
-/* No hover o sombreado some, revelando o conteúdo da imagem */
-.card--photo:hover .card-overlay {
-    opacity: 0;
+.card--banner:hover .card-overlay {
+    opacity: 1; /* O texto do artigo NÃO deve sumir no hover */
 }
- 
+
+/* ── TIPOGRAFIA DOS CARDS ── */
 .card-tag {
     display: inline-block;
     font-size: 11px;
@@ -405,20 +414,22 @@
     color: var(--gold-500);
     margin-bottom: 8px;
 }
- 
+
 .card-overlay h3 {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 6px;
     letter-spacing: -0.01em;
+    color: #ffffff;
 }
- 
+
 .card-overlay p {
     font-size: 13px;
     opacity: 0.85;
     line-height: 1.5;
+    color: #ffffff;
+    margin: 0;
 }
- 
 /* #endregion */
  
 /* #region ─── JORNADA ─── */

@@ -83,7 +83,6 @@ const podcastsDefault = [
 ];
 
 const webinarsDefault = [
-  // A estrutura da imagem do Youtube é sempre: https://img.youtube.com/vi/ID_DO_VIDEO/maxresdefault.jpg
   { 
     id: 1, 
     title: "Sucessão em empresas familiares", 
@@ -94,7 +93,7 @@ const webinarsDefault = [
   { 
     id: 2, 
     title: "Sustentabilidade como fundamento", 
-    thumb: "https://img.youtube.com/vi/uqrQNUZI6DE/hqdefault.jpg", // Substitua pelo ID real depois
+    thumb: "https://img.youtube.com/vi/uqrQNUZI6DE/hqdefault.jpg", 
     tag: "GRAVADO", 
     link: "https://www.youtube.com/watch?v=uqrQNUZI6DE&list=PL98yzQXxvQjWG900r7Kd4JzYuXnItBq5N&index=20" 
   },
