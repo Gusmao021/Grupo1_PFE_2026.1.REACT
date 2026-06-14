@@ -6,6 +6,7 @@ import AboutPage from './pages/About/AboutPage'
 import ArticlesPage from './pages/Articles/ArticlesPage'
 import ArticlePage from './pages/Article/ArticlePage'
 import ContactPage from './pages/Contact/ContactPage'
+import ConselheiroPerfil from './pages/About/ConselheiroPerfil'
 
 export default function App() {
   const location = useLocation()
