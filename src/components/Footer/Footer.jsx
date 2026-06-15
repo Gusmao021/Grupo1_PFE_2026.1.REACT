@@ -73,8 +73,24 @@ export default function Footer() {
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} Associação de Conselheiros do Brasil. Todos os direitos reservados.</p>
         <div className="legal-links">
-          <Link to="/" onClick={() => { window.scrollTo(0, 0); alert("Página em construção!"); }}>Política de Privacidade</Link>
-          <Link to="/" onClick={() => { window.scrollTo(0, 0); alert("Página em construção!"); }}>Política de Cookies</Link>
+          <a 
+            href="#" 
+            onClick={(e) => { 
+              e.preventDefault(); 
+              alert("Página em construção!"); 
+            }}
+          >
+            Política de Privacidade
+          </a>
+          <a 
+            href="#" 
+            onClick={(e) => { 
+              e.preventDefault(); 
+              alert("Página em construção!"); 
+            }}
+          >
+            Política de Cookies
+          </a>
         </div>
       </div>
     </footer>
