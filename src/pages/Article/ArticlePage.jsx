@@ -16,6 +16,12 @@ export default function ArticlePage() {
     const [status, setStatus] = useState('loading') // loading | ok | notfound | error
 
    useEffect(() => {
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
         let active = true
         let isFetching = true // Trava de segurança contra internet rápida demais
 
