@@ -170,6 +170,7 @@ export async function fetchHomeAssociados(count = 3) {
                         ? excerpt.slice(0, 90) + '…'
                         : 'Conselheiro associado da ACBrasil',
                     link: p.link,
+                    id: p.id, // <--- CORRIGIDO AQUI: mudou de item.id para p.id
                 }
             })
     } catch (err) {

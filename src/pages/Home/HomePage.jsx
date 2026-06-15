@@ -285,9 +285,11 @@ function HomePage() {
   const cards = tab === "artigos" ? artigos : associados;
  
   // Clique no card: artigos com slug abrem a página interna;
-  // demais (associados) seguem abrindo o link externo em nova aba.
+  // Clique no card: associados vão para o perfil;
   const openCard = (card) => {
-    if (card.slug) {
+    if (tab === "associados") {
+      navigate(`/quem-somos/conselheiro/${card.id}`);
+    } else if (card.slug) {
       navigate(`/artigos/${card.slug}`);
     } else if (card.link) {
       window.open(card.link, "_blank", "noopener,noreferrer");
@@ -398,10 +400,9 @@ function HomePage() {
             <div
               className={`card card--photo ${tab === "associados" ? "card--retrato" : "card--banner"}`}
               key={i}
-              onClick={() => openCard(c)}
+              onClick={() => openCard(c, i)} /* MUDANÇA: Agora passamos o cartão (c) e a posição (i) */
               style={{
-                ...(c.slug || c.link ? { cursor: "pointer" } : {}),
-                // o mesmo banner vira fundo desfocado atrás da imagem inteira
+                ...(c.slug || c.link || tab === "associados" ? { cursor: "pointer" } : {}),
                 ...(tab === "artigos" && c.img ? { backgroundImage: `url(${c.img})` } : {}),
               }}
             >
