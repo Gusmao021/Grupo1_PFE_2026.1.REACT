@@ -271,7 +271,7 @@
 .card {
     border-radius: var(--radius-lg);
     overflow: hidden;
-    height: 320px;
+    height: 400px; 
     transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
     will-change: transform;
 }
@@ -380,28 +380,46 @@
 
 /* ── ARTIGOS (Banner Dividido) ── */
 .card--banner {
-    background: transparent; 
+    /* Removemos o !important para o React conseguir colocar a foto no fundo */
+    background-color: var(--navy-900);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Criamos a "película de vidro" para desfocar o fundo e aplicar o tom azul */
+.card--banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 15, 61, 0.75); /* Filtro azul escuro translúcido */
+    backdrop-filter: blur(16px); /* A mágica do desfoque (Blur) */
+    -webkit-backdrop-filter: blur(16px); /* Suporte para Safari (iPhones) */
+    z-index: 0;
+    pointer-events: none;
 }
 
 .card--banner img {
+    position: relative; 
+    z-index: 1; /* Garante que a foto principal fique nítida ACIMA do desfoque */
     height: 60%; 
     width: 100%; 
     object-fit: contain; 
     object-position: center; 
-    background: transparent; /* Permite que o azul escuro apareça nas sobras laterais */
-    padding: 12px; /* Um leve respiro para a imagem não colar no teto do card */
+    background: transparent; 
+    padding: 12px; 
 }
 
 .card--banner .card-overlay {
     top: 60%; 
-    /* O texto continua no mesmo fundo azul escuro, criando uma união perfeita com o topo */
+    z-index: 2; /* O texto fica no topo de todas as camadas */
     background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
     justify-content: flex-start; 
     padding: 20px 24px;
 }
 
 .card--banner:hover .card-overlay {
-    opacity: 1; /* O texto do artigo NÃO deve sumir no hover */
+    opacity: 1; 
 }
 
 /* ── TIPOGRAFIA DOS CARDS ── */
